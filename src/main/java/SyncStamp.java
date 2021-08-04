@@ -1,6 +1,6 @@
 import java.util.Calendar;
 
-public class SyncStamp {
+class SyncStamp {
 
     private long timestamp;
     private long id;

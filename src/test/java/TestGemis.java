@@ -6,23 +6,21 @@ import java.util.Arrays;
 
 public class TestGemis {
 
-    private static int[] items;
+    private Gemis gemis;
 
     @Before
-    void init() {
-        items = new int[100];
-        for (int i = 0; i < 101; i++)
-            items[i] = i + 1;
+    public void init() {
+        gemis = new Gemis("BOND");
+        for (int i = 0; i < 100; i++)
+            gemis.add(SyncStamp.create(i), i * 10);
     }
 
     @Test
-    public void testGemisAdd() {
-        Gemis gemis = new Gemis("BOND");
-        Arrays.stream(items).forEach(v -> gemis.add(SyncStamp.create(v), v * 100));
+    public void testGemisGet() {
 
         System.out.println(".... retrieve from gemis");
-
-        Arrays.stream(items).forEach(key -> System.out.println(gemis.get(key)));
+        for (int i = 0; i < 100; i++)
+            System.out.println(gemis.get(i));
 
         Assert.assertEquals(100, gemis.size());
     }

@@ -1,29 +1,30 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Scanner;
 
-public class Gemis {
-    public static void main(String[] args) {
+class Gemis {
 
-        System.out.println("Hello Gemis");
+    public static void main(String[] args) throws InterruptedException {
 
-        Gemis gemis = new Gemis("BOND");
+        Gemis gemis = new Gemis("Test Gemis");
 
-        System.out.println("... add 2 items");
-        long key1 = 100, key2 = 200;
-        gemis.add(SyncStamp.create(key1), 1);
-        gemis.add(SyncStamp.create(key2), 2);
+        Object lock = new Object();
+        synchronized(lock) {
+            lock.wait();
+        }
 
-        System.out.println(".... retrieve from gemis");
-        System.out.println(gemis.get(key1));
-        System.out.println(gemis.get(key2));
+        System.out.println("THE END ... ");
     }
 
     private String name;
 
     private HashMap<SyncStamp, Integer> data = new HashMap<>();
 
-    private Gemis(String name) {
+    public Gemis(String name) {
         name = name;
+        System.out.println(String.format("Gemis %s running ... ", name));
     }
 
     public void add(SyncStamp stamp, Integer v) {
@@ -39,5 +40,9 @@ public class Gemis {
             return data.get(key.get());
         else
             return null;
+    }
+
+    public int size() {
+        return data.size();
     }
 }
