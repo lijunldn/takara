@@ -1,8 +1,10 @@
+package me.takara.gemis;
+
+import me.takara.shared.SyncStamp;
+import me.takara.shared.entities.Bond;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 public class TestGemis {
 
@@ -12,7 +14,7 @@ public class TestGemis {
     public void init() {
         gemis = new Gemis("BOND");
         for (int i = 0; i < 100; i++)
-            gemis.add(SyncStamp.create(i), i * 10);
+            gemis.add(SyncStamp.create(i), new Bond(i, "BOND-" + i));
     }
 
     @Test

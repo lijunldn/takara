@@ -1,6 +1,8 @@
+package me.takara.shared;
+
 import java.util.Calendar;
 
-class SyncStamp {
+public class SyncStamp {
 
     private long timestamp;
     private long id;
