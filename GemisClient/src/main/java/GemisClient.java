@@ -1,25 +1,51 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
 import me.takara.shared.Env;
 import me.takara.shared.entities.Bond;
+import org.glassfish.jersey.client.ClientConfig;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
 public class GemisClient {
 
     public Bond get(long id) throws IOException {
-        URL url = new URL(Env.GEMIS_BOND_URI.toString() + "/" + id);
-        String msg = exeGet(url);
-        return Bond.of(msg);
+
+        Client client = ClientBuilder.newClient(new ClientConfig());
+        WebTarget target = client.target(Env.GEMIS_BOND_URI).path("get").path("" + id);
+        var resp = target.request().accept(MediaType.APPLICATION_JSON).get();
+        return resp.readEntity(Bond.class);
+//        URL url = new URL(Env.GEMIS_BOND_URI.toString() + "/get/" + id);
+//        String msg = exeGet(url);
+//        return Bond.of(msg);
     }
 
     public String hello() throws IOException {
-        return exeGet(Env.GEMIS_BOND_URI.toURL());
+
+        Client client = ClientBuilder.newClient(new ClientConfig());
+        WebTarget target = client.target(Env.GEMIS_BOND_URI);
+        return target.request().accept(MediaType.APPLICATION_JSON).get(String.class);
+
+//        return exeGet(Env.GEMIS_BOND_URI.toURL());
+
+    }
+
+    public void set(Bond bond) throws IOException {
+
+//        Client client = ClientBuilder.newClient( new ClientConfig(MultiPartFeature.class) );
+//        WebTarget webTarget = client.target(Env.GEMIS_BOND_URI).path("/add");
+//
+//        Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
+//        Response response = invocationBuilder.post(Entity.entity(bond, MediaType.APPLICATION_JSON));
+//
+//        System.out.println(response.getStatus());
+//        System.out.println(response.readEntity(String.class));
+
     }
 
     String exeGet(URL url) throws IOException {

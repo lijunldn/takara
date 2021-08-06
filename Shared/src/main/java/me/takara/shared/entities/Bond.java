@@ -16,9 +16,9 @@ public class Bond {
         this.name = name;
     }
 
-    public static Bond of(String json) throws JsonProcessingException {
-        return new ObjectMapper().readValue(json, Bond.class);
-    }
+//    public static Bond of(String json) throws JsonProcessingException {
+//        return new ObjectMapper().readValue(json, Bond.class);
+//    }
 
     @Override
     public String toString() {

@@ -27,4 +27,10 @@ public class TestGemisClient extends TestCase {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testSet() throws IOException {
+        Bond bond = new Bond(100, "Morgan Stanley");
+        new GemisClient().set(bond);
+    }
 }
