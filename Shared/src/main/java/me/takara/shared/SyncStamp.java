@@ -2,7 +2,7 @@ package me.takara.shared;
 
 import java.util.Calendar;
 
-public class SyncStamp {
+public class SyncStamp implements Comparable<SyncStamp> {
 
     private long timestamp;
     private long id;
@@ -37,5 +37,12 @@ public class SyncStamp {
 
     public long getId() {
         return id;
+    }
+
+    @Override
+    public int compareTo(SyncStamp o) {
+        if (this.timestamp < o.timestamp) return -1;
+        else if (this.timestamp > o.timestamp) return 1;
+        else return 0;
     }
 }

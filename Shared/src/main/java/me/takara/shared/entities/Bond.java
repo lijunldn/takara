@@ -3,13 +3,13 @@ package me.takara.shared.entities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.stream.Stream;
-
+//@XmlRootElement(name = "bond")
 public class Bond {
 
     public final static Bond EMPTY = new Bond(0, "");
 
-    public Bond() {}
+    public Bond() {
+    }
 
     public Bond(long id, String name) {
         this.id = id;

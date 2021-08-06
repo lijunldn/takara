@@ -7,20 +7,22 @@ import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 //import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 
 class Gemis {
 
+    private static Logger log = Logger.getLogger(Gemis.class.getName());
+
     private volatile static Gemis instance;
 
-    public static Gemis getInstance(){
-        if(instance == null){
-            synchronized(Gemis.class){
-                if(instance == null){
+    public static Gemis getInstance() {
+        if (instance == null) {
+            synchronized (Gemis.class) {
+                if (instance == null) {
                     instance = new Gemis("Bond");
                 }
             }
@@ -36,9 +38,9 @@ class Gemis {
 
         Gemis gemis = getInstance();
         for (int i = 0; i < 100; i++)
-            gemis.add(SyncStamp.create(i), new Bond(i, "BOND-" + i));
+            gemis.add(new Bond(i, "BOND-" + i));
 
-        System.out.println("Starting jetty...");
+        log.info("Starting jetty...");
         final ResourceConfig resourceConfig = new ResourceConfig(RestfulController.class);
 //        final SimpleServer server = SimpleContainerFactory.create(BASE_URI, resourceConfig);
         final Server server = JettyHttpContainerFactory.createServer(Env.GEMIS_BOND_URI, resourceConfig, false);
@@ -46,9 +48,9 @@ class Gemis {
             @Override
             public void run() {
                 try {
-                    System.out.println("Shutting down the application...");
+                    log.info("Shutting down the application...");
                     server.stop();
-                    System.out.println("THE END ... ");
+                    log.info("THE END ... ");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -56,20 +58,35 @@ class Gemis {
         }));
         server.start();
 
-        System.out.println(String.format("Jetty started.\nTry out %s\nStop the application using CTRL+C", Env.GEMIS_BOND_URI));
+        log.info(String.format("Jetty started.\nTry out %s\nStop the application using CTRL+C", Env.GEMIS_BOND_URI));
         Thread.currentThread().join();
     }
 
     Gemis(String name) {
         name = name;
-        System.out.println(String.format("Gemis %s running ... ", name));
+        log.info(String.format("Gemis %s running ... ", name));
     }
 
-    public void add(SyncStamp stamp, Bond bond) {
-        data.put(stamp, bond);
-        Bond temp = data.get(stamp);
+    private SyncStamp getKey(Bond bond) {
+        Optional<SyncStamp> key = data.keySet().stream().filter(a -> a.getId() == bond.getId()).findFirst();
+        return key.isPresent() ? key.get() : null;
+    }
+
+    public SyncStamp add(Bond bond) {
+
+        SyncStamp key = getKey(bond);
+        if (key != null) {
+            data.remove(key);
+        }
+
+        // new
+        key = SyncStamp.create(bond.getId());
+        data.put(key, bond);
+
+        Bond temp = data.get(key);
         assert temp != null;
-        System.out.println(String.format("Successfully added %s", temp));
+        log.info(String.format("Successfully added %s", temp));
+        return key;
     }
 
     public Bond get(long v) {
