@@ -12,7 +12,8 @@ import java.util.logging.Logger;
 @Path("/gemis")
 public class RestfulController {
 
-    private static Logger log = Logger.getLogger("RestfulController");
+    private static Logger log = Logger.getLogger(RestfulController.class.getName());
+    private String logTime = "Took %s";
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -21,11 +22,11 @@ public class RestfulController {
 
         final Stopwatch sw = new Stopwatch().start();
         sw.stop();
-        log.info("getHello - " + sw.elapsed(TimeUnit.MILLISECONDS));
+        log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
         return "HELLO! I'm your Gemis.";
     }
 
-    @Path("/{id}")
+    @Path("/get/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -36,23 +37,23 @@ public class RestfulController {
         Bond obj = Gemis.getInstance().get(id);
 
         sw.stop();
-        log.info("getById - " + sw.elapsed(TimeUnit.MILLISECONDS));
+        log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
         return obj;
 
     }
 
-    @Path("/add")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public SyncStamp add(Bond bond) {
-
-        assert bond != null;
-        final Stopwatch sw = new Stopwatch().start();
-
-        SyncStamp stamp = Gemis.getInstance().add(bond);
-
-        System.out.println("add - " + sw.elapsed(TimeUnit.MILLISECONDS));
-        return stamp;
-    }
+//    @Path("/add")
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    public SyncStamp add(Bond bond) {
+//
+//        assert bond != null;
+//        final Stopwatch sw = new Stopwatch().start();
+//
+//        SyncStamp stamp = Gemis.getInstance().add(bond);
+//
+//        log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
+//        return stamp;
+//    }
 }
