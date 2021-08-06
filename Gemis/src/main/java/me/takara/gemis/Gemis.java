@@ -1,5 +1,6 @@
 package me.takara.gemis;
 
+import me.takara.shared.Env;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.entities.Bond;
 import org.eclipse.jetty.server.Server;
@@ -13,8 +14,6 @@ import java.util.Optional;
 //import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 
 class Gemis {
-
-    private static final URI BASE_URI = URI.create("http://localhost:8080/gemis");
 
     private volatile static Gemis instance;
 
@@ -42,7 +41,7 @@ class Gemis {
         System.out.println("Starting jetty...");
         final ResourceConfig resourceConfig = new ResourceConfig(RestfulController.class);
 //        final SimpleServer server = SimpleContainerFactory.create(BASE_URI, resourceConfig);
-        final Server server = JettyHttpContainerFactory.createServer(BASE_URI, resourceConfig, false);
+        final Server server = JettyHttpContainerFactory.createServer(Env.GEMIS_BOND_URI, resourceConfig, false);
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
@@ -57,7 +56,7 @@ class Gemis {
         }));
         server.start();
 
-        System.out.println(String.format("Jetty started.\nTry out %s\nStop the application using CTRL+C", BASE_URI));
+        System.out.println(String.format("Jetty started.\nTry out %s\nStop the application using CTRL+C", Env.GEMIS_BOND_URI));
         Thread.currentThread().join();
     }
 

@@ -11,6 +11,7 @@
     <modules>
         <module>Gemis</module>
         <module>Shared</module>
+        <module>GemisClient</module>
     </modules>
 
     <!-- https://mvnrepository.com/artifact/junit/junit -->
