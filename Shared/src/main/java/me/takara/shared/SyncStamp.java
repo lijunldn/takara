@@ -45,4 +45,9 @@ public class SyncStamp implements Comparable<SyncStamp> {
         else if (this.timestamp > o.timestamp) return 1;
         else return 0;
     }
+
+    @Override
+    public String toString() {
+        return String.format("{SyncStamp:%s|%s}", id, timestamp);
+    }
 }

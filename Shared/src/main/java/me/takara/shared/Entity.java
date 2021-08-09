@@ -4,6 +4,7 @@ import me.takara.shared.entities.Bond;
 import me.takara.shared.entities.Equity;
 
 import java.net.URI;
+import java.util.stream.Stream;
 
 public enum Entity {
 
@@ -32,6 +33,10 @@ public enum Entity {
         return gemisURI;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public Class getCls() {
         return cls;
     }
@@ -39,6 +44,10 @@ public enum Entity {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public static Stream<Entity> stream() {
+        return Stream.of(Entity.values());
     }
 
 }
