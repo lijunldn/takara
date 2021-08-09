@@ -20,10 +20,11 @@ public class RestfulController {
     public String getHello() throws InterruptedException {
 
         final Stopwatch sw = Stopwatch.createStarted();
+        String name = Gemis.getInstance().getName();
         Thread.sleep(1000L);
         sw.stop();
         log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
-        return "HELLO! I'm your Gemis.";
+        return String.format("HELLO! I'm your %s Gemis.", name);
     }
 
     @Path("/get/{id}")

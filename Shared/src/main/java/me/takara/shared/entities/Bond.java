@@ -2,11 +2,12 @@ package me.takara.shared.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.takara.shared.Instrument;
 
 //import javax.xml.bind.annotation.XmlRootElement;
 
 //@XmlRootElement(name = "bond")
-public class Bond {
+public class Bond implements Instrument {
 
     public final static Bond EMPTY = new Bond(0, "");
 
@@ -37,10 +38,12 @@ public class Bond {
                 '}';
     }
 
+    @Override
     public long getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

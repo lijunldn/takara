@@ -1,6 +1,7 @@
 package me.takara.gemis;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import me.takara.shared.Entity;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.entities.Bond;
 import org.junit.Assert;
@@ -14,7 +15,7 @@ public class TestGemis {
 
     @Before
     public void init() {
-        gemis = new Gemis("BOND");
+        gemis = new Gemis(Entity.BOND);
         for (int i = 0; i < 100; i++)
             gemis.add(new Bond(i, "BOND-" + i));
 

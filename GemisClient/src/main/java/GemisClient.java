@@ -1,4 +1,5 @@
-import me.takara.shared.Env;
+import me.takara.shared.Entity;
+import me.takara.shared.Instrument;
 import me.takara.shared.entities.Bond;
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -14,12 +15,18 @@ import java.nio.charset.Charset;
 
 public class GemisClient {
 
-    public Bond get(long id) throws IOException {
+    private Entity entity;
+
+    public GemisClient(Entity entity) {
+        this.entity = entity;
+    }
+
+    public Instrument get(long id) throws IOException {
 
         Client client = ClientBuilder.newClient(new ClientConfig());
-        WebTarget target = client.target(Env.GEMIS_BOND_URI).path("get").path("" + id);
+        WebTarget target = client.target(this.entity.getGemisURI()).path("get").path("" + id);
         var resp = target.request().accept(MediaType.APPLICATION_JSON).get();
-        return resp.readEntity(Bond.class);
+        return (Instrument) resp.readEntity(this.entity.getCls());
 //        URL url = new URL(Env.GEMIS_BOND_URI.toString() + "/get/" + id);
 //        String msg = exeGet(url);
 //        return Bond.of(msg);
@@ -28,7 +35,7 @@ public class GemisClient {
     public String hello() throws IOException {
 
         Client client = ClientBuilder.newClient(new ClientConfig());
-        WebTarget target = client.target(Env.GEMIS_BOND_URI);
+        WebTarget target = client.target(entity.getGemisURI());
         return target.request().accept(MediaType.APPLICATION_JSON).get(String.class);
 
 //        return exeGet(Env.GEMIS_BOND_URI.toURL());
