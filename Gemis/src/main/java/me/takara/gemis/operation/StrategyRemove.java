@@ -6,7 +6,7 @@ import me.takara.shared.SyncStamp;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class StrategyRemove implements Strategy {
+class StrategyRemove implements Strategy {
 
     public SyncStamp execute(HashMap<SyncStamp, Instrument> data, Instrument item) {
         Optional<SyncStamp> key = data.keySet().stream().filter(a -> a.getId() == item.getId()).findFirst();

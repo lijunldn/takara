@@ -1,8 +1,6 @@
 package me.takara.gemis;
 
-import me.takara.gemis.operation.StrategyAdd;
-import me.takara.gemis.operation.StrategyGet;
-import me.takara.gemis.operation.StrategyRemove;
+import me.takara.gemis.operation.Strategy;
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
@@ -88,7 +86,7 @@ public class Gemis {
     }
 
     public synchronized SyncStamp remove(Instrument item) {
-        var stamp = this.operator.execute(new StrategyRemove(), item);
+        var stamp = this.operator.execute(Strategy.getStrategy(Strategy.Operators.REMOVE), item);
         if (stamp != null) {
             log.info(String.format("Removed %s - %s", item, stamp));
         } else {
@@ -107,14 +105,14 @@ public class Gemis {
 
     public synchronized SyncStamp add(Instrument item) {
 
-        SyncStamp key = this.operator.execute(new StrategyAdd(), item);
+        SyncStamp key = this.operator.execute(Strategy.getStrategy(Strategy.Operators.ADD), item);
         log.info(String.format("Added %s - %s", item, key));
         return key;
     }
 
     public Optional<Instrument> get(long v) {
 
-        SyncStamp key = this.operator.execute(new StrategyGet(), new Bond(v, ""));
+        SyncStamp key = this.operator.execute(Strategy.getStrategy(Strategy.Operators.GET), new Bond(v, ""));
         if (key != null)
             return Optional.of(data.get(key));
         else

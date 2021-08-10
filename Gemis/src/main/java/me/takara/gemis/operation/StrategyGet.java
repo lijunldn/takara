@@ -6,7 +6,7 @@ import me.takara.shared.SyncStamp;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class StrategyGet implements Strategy {
+class StrategyGet implements Strategy {
 
     public SyncStamp execute(HashMap<SyncStamp, Instrument> data, Instrument item) {
 

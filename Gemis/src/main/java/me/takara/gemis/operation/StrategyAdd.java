@@ -1,12 +1,11 @@
 package me.takara.gemis.operation;
 
-import me.takara.gemis.GemisOperator;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
 
 import java.util.HashMap;
 
-public class StrategyAdd implements Strategy {
+class StrategyAdd implements Strategy {
 
     public SyncStamp execute(HashMap<SyncStamp, Instrument> data, Instrument item) {
 

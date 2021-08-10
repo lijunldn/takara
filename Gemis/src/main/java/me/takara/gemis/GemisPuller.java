@@ -1,6 +1,5 @@
 package me.takara.gemis;
 
-import me.takara.gemis.operation.StrategyGet;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
 
