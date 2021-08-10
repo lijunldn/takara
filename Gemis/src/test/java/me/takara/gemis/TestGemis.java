@@ -17,15 +17,28 @@ public class TestGemis {
             Assert.assertEquals(0, gms.size());
             Assert.assertFalse(gms.get(1).isPresent());
         });
+    }
 
-//        gemis = new Gemis(Entity.BOND);
-//        for (int i = 0; i < 100; i++)
-//            gemis.add(new Bond(i, "BOND-" + i));
-//
-//        b100 = new Bond(100, "Morgan Stanley");
-//        b200 = new Bond(200, "Nomura");
-//        b300 = new Bond(300, "Merrill Lynch");
+    @Test
+    public void testGemisRemove() {
 
+        Gemis gms = new Gemis(Entity.BOND);
+
+        Bond b1 = new Bond(100, "Morgan Stanley");
+        SyncStamp stamp1 = gms.add(b1);
+        Bond b2 = new Bond(200, "Nomura");
+        SyncStamp stamp2 = gms.add(b2);
+        Bond b3 = new Bond(300, "Barcap");
+
+        Assert.assertEquals(2, gms.size());
+        gms.remove(b1); // remove b1, expect -1
+        Assert.assertEquals(1, gms.size());
+        gms.remove(b1); // remove b1 again, expect no impact
+        Assert.assertEquals(1, gms.size());
+        gms.remove(b3); // remove b3, expect no impact
+        Assert.assertEquals(1, gms.size());
+        gms.remove(b2); // remove b2, expect -1
+        Assert.assertEquals(0, gms.size());
     }
 
     @Test

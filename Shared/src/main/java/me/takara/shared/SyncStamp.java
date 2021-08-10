@@ -11,6 +11,14 @@ public class SyncStamp implements Comparable<SyncStamp> {
         timestamp = Calendar.getInstance().getTimeInMillis();
     }
 
+    public final static SyncStamp ZERO;
+
+    static {
+        ZERO = new SyncStamp();
+        ZERO.timestamp = 0;
+        ZERO.id = 0;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -12,6 +12,7 @@ import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -26,6 +27,7 @@ public class Gemis {
     Gemis(Entity entity) {
         this.entity = entity;
         this.operator = new GemisOperator(data);
+        this.puller = new GemisPuller(data);
         log.info(String.format("Gemis %s running ... ", entity));
     }
 
@@ -47,7 +49,8 @@ public class Gemis {
 
     private Entity entity;
     private GemisOperator operator;
-    private HashMap<SyncStamp, Instrument> data = new HashMap<>();
+    private GemisPuller puller;
+    private HashMap<SyncStamp, Instrument> data = new LinkedHashMap<>();
 
     public static void main(String[] args) throws Exception {
 
@@ -85,14 +88,27 @@ public class Gemis {
     }
 
     public synchronized SyncStamp remove(Instrument item) {
+        var stamp = this.operator.execute(new StrategyRemove(), item);
+        if (stamp != null) {
+            log.info(String.format("Removed %s - %s", item, stamp));
+        } else {
+            log.info(String.format("Cannot find %s", item));
+        }
+        return stamp;
+    }
 
-        return this.operator.execute(new StrategyRemove(), item);
+    public GemisPuller pullSinceTimeZero() {
+        return this.puller.of(SyncStamp.ZERO);
+    }
+
+    public GemisPuller pullSince(SyncStamp stamp) {
+        return this.puller.of(stamp);
     }
 
     public synchronized SyncStamp add(Instrument item) {
 
         SyncStamp key = this.operator.execute(new StrategyAdd(), item);
-        log.info(String.format("Successfully added %s - %s", item, key));
+        log.info(String.format("Added %s - %s", item, key));
         return key;
     }
 

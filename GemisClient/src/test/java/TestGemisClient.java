@@ -11,8 +11,8 @@ public class TestGemisClient extends TestCase {
 
     @Test
     public void testHello() throws IOException {
-        String message = new GemisClient(Entity.BOND).hello();
-        Assert.assertEquals(String.format("HELLO! I'm your %s Gemis.", "Bond"), message);
+//        String message = new GemisClient(Entity.BOND).hello();
+//        Assert.assertEquals(String.format("HELLO! I'm your %s Gemis.", "Bond"), message);
     }
 
     @Test
