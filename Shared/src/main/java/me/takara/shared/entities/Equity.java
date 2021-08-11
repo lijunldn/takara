@@ -1,15 +1,10 @@
 package me.takara.shared.entities;
 
+import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
 
-public class Equity implements Instrument {
-    @Override
-    public long getId() {
-        return 0;
-    }
+public interface Equity extends Instrument {
 
-    @Override
-    public String getName() {
-        return null;
-    }
+    default Entity getType() { return Entity.EQUITY; }
+
 }

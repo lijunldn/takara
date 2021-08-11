@@ -1,5 +1,6 @@
 package me.takara.gemis;
 
+import me.takara.gemis.entities.BondImp;
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
@@ -23,24 +24,17 @@ public class TestTracker {
     private SyncStamp createSampleData(int total) {
         SyncStamp stamp = SyncStamp.ZERO;
         for (int i = 0; i < total; i++) {
-            stamp = this.gemis.add(new Bond(i, "BOND" + i));
+            stamp = this.gemis.add(new BondImp("BOND" + i));
         }
         return stamp;
     }
 
-    private List<Instrument> pull(GemisPuller puller, int expectedId) {
+    private List<Instrument> pull(GemisPuller puller) {
         List<Instrument> list = new ArrayList<>(10);
-        int i = expectedId;
         while (puller.hasMoreItems()) {
 
             // verify the order
             var bds = puller.next(2);
-
-            for (int n = 0; n < bds.size(); n++) {
-                Assert.assertEquals(i, bds.get(n).getId());
-                i++;
-            }
-
             list.addAll(bds);
         }
         return list;
@@ -55,21 +49,23 @@ public class TestTracker {
 
         // tracker start from 0
         var puller = gemis.pullSinceTimeZero();
-        List<Instrument> list = pull(puller, 0);
+        List<Instrument> list = pull(puller);
 
         // verify - 10 pulled
         Assert.assertEquals(total, list.size());
     }
 
+    @Test
     public void test_pull_from_an_existing_x() {
 
         SyncStamp stampX = createSampleData(4);
         SyncStamp stampY = createSampleData(6);
-        // when x is before x
-        var puller = gemis.pullSince(stampX);
-        List<Instrument> list = pull(puller, 4);
 
         // when x is between zero and max
+        var puller = gemis.pullSince(stampX);
+        List<Instrument> list = pull(puller);
+        // verify - 10 pulled
+        Assert.assertEquals(6, list.size());
 
         // when x is beyond max
     }

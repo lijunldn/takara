@@ -1,5 +1,6 @@
 package me.takara.gemis.operation;
 
+import jdk.jshell.spi.ExecutionControl;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
 
@@ -11,6 +12,12 @@ class StrategyGet implements Strategy {
     public SyncStamp execute(HashMap<SyncStamp, Instrument> data, Instrument item) {
 
         Optional<SyncStamp> key = data.keySet().stream().filter(a -> a.getId() == item.getId()).findFirst();
+        return key.orElse(null);
+    }
+
+    public SyncStamp execute(HashMap<SyncStamp, Instrument> data, long id) {
+
+        Optional<SyncStamp> key = data.keySet().stream().filter(a -> a.getId() == id).findFirst();
         return key.orElse(null);
     }
 }

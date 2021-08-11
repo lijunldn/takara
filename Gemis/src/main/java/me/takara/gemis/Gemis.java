@@ -1,5 +1,6 @@
 package me.takara.gemis;
 
+import me.takara.gemis.entities.BondImp;
 import me.takara.gemis.operation.Strategy;
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
@@ -57,7 +58,7 @@ public class Gemis {
         Gemis gemis = create(entity);
 
         for (int i = 0; i < 100; i++)
-            gemis.add(new Bond(i, "BOND-" + i));
+            gemis.add(new BondImp("BOND-" + i));
 
         startJetty(entity);
     }
@@ -110,9 +111,9 @@ public class Gemis {
         return key;
     }
 
-    public Optional<Instrument> get(long v) {
+    public Optional<Instrument> get(long id) {
 
-        SyncStamp key = this.operator.execute(Strategy.getStrategy(Strategy.Operators.GET), new Bond(v, ""));
+        SyncStamp key = this.operator.execute(Strategy.getStrategy(Strategy.Operators.GET), id);
         if (key != null)
             return Optional.of(data.get(key));
         else

@@ -17,4 +17,8 @@ public class GemisOperator {
     public SyncStamp execute(Strategy strategy, Instrument item) {
         return strategy.execute(data, item);
     }
+
+    public SyncStamp execute(Strategy strategy, long id) {
+        return strategy.execute(data, id);
+    }
 }

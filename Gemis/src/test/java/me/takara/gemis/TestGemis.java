@@ -1,5 +1,6 @@
 package me.takara.gemis;
 
+import me.takara.gemis.entities.BondImp;
 import me.takara.shared.Entity;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.entities.Bond;
@@ -24,11 +25,11 @@ public class TestGemis {
 
         Gemis gms = new Gemis(Entity.BOND);
 
-        Bond b1 = new Bond(100, "Morgan Stanley");
+        Bond b1 = new BondImp(100, "Morgan Stanley");
         SyncStamp stamp1 = gms.add(b1);
-        Bond b2 = new Bond(200, "Nomura");
+        Bond b2 = new BondImp(200, "Nomura");
         SyncStamp stamp2 = gms.add(b2);
-        Bond b3 = new Bond(300, "Barcap");
+        Bond b3 = new BondImp(300, "Barcap");
 
         Assert.assertEquals(2, gms.size());
         gms.remove(b1); // remove b1, expect -1
@@ -46,7 +47,7 @@ public class TestGemis {
 
         Gemis gms = new Gemis(Entity.BOND);
 
-        Bond b1 = new Bond(100, "Morgan Stanley");
+        Bond b1 = new BondImp(100, "Morgan Stanley");
         SyncStamp stamp = gms.add(b1);
         Assert.assertEquals(1, gms.size());
         var tmp = gms.get(b1.getId());
@@ -69,7 +70,7 @@ public class TestGemis {
         Assert.assertEquals("Merrill Lynch", tmpX.get().getName());
         Assert.assertEquals(1, stampMerrill.compareTo(stamp));
 
-        Bond b2 = new Bond(200, "Nomura");
+        Bond b2 = new BondImp(200, "Nomura");
         SyncStamp stamp2 = gms.add(b2);
         Assert.assertEquals(2, gms.size());
         var tmp2 = gms.get(b2.getId());
