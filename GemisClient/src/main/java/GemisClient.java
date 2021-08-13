@@ -1,5 +1,7 @@
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
+import me.takara.shared.client.TakaraBuilder;
+import me.takara.shared.client.TakaraRepository;
 import me.takara.shared.entities.Bond;
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -16,17 +18,20 @@ import java.nio.charset.Charset;
 public class GemisClient {
 
     private Entity entity;
+    private TakaraRepository repository;
 
     public GemisClient(Entity entity) {
+        repository = TakaraBuilder.create(entity);
         this.entity = entity;
     }
 
     public Instrument get(long id) throws IOException {
 
-        Client client = ClientBuilder.newClient(new ClientConfig());
-        WebTarget target = client.target(this.entity.getGemisURI()).path("get").path("" + id);
-        var resp = target.request().accept(MediaType.APPLICATION_JSON).get();
-        return (Instrument) resp.readEntity(this.entity.getCls());
+        return repository.get(id);
+//        Client client = ClientBuilder.newClient(new ClientConfig());
+//        WebTarget target = client.target(this.entity.getGemisURI()).path("get").path("" + id);
+//        var resp = target.request().accept(MediaType.APPLICATION_JSON).get();
+//        return (Instrument) resp.readEntity(this.entity.getCls());
 //        URL url = new URL(Env.GEMIS_BOND_URI.toString() + "/get/" + id);
 //        String msg = exeGet(url);
 //        return Bond.of(msg);

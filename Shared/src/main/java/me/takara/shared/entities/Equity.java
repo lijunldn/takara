@@ -1,10 +1,12 @@
 package me.takara.shared.entities;
 
+import lombok.Data;
 import me.takara.shared.Entity;
-import me.takara.shared.Instrument;
 
-public interface Equity extends Instrument {
+@Data
+public class Equity extends InstrumentBase {
 
-    default Entity getType() { return Entity.EQUITY; }
+    @Override
+    public Entity getType() { return Entity.EQUITY; }
 
 }

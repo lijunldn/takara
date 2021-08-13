@@ -1,10 +1,15 @@
-package me.takara.gemis.entities;
+package me.takara.shared.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
 
 public abstract class InstrumentBase implements Instrument {
+
+    protected long id;
+
+    protected String name;
 
     @Override
     public String toString() {
@@ -38,7 +43,4 @@ public abstract class InstrumentBase implements Instrument {
         this.name = name;
     }
 
-    long id;
-
-    String name;
 }
