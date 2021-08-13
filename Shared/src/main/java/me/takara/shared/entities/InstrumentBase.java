@@ -6,23 +6,23 @@ import me.takara.shared.Instrument;
 
 public abstract class InstrumentBase implements Instrument {
 
-    protected long id;
+    protected Long id;
 
     protected String name;
 
     protected InstrumentBase() {}
 
-    @Override
-    public String toString() {
-
-        try {
-            return new ObjectMapper().writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return String.format("%s{id=%s,name=%s}", this.getType(), this.id, this.name);
-    }
+//    @Override
+//    public String toString() {
+//
+//        try {
+//            return new ObjectMapper().writeValueAsString(this);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return String.format("%s{id=%s,name=%s}", this.getType(), this.id, this.name);
+//    }
 
     @Override
     public int hashCode() {
@@ -30,7 +30,7 @@ public abstract class InstrumentBase implements Instrument {
     }
 
     @Override
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

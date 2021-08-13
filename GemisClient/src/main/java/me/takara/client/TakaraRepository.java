@@ -14,6 +14,7 @@ public class TakaraRepository {
 
     /**
      * Constructs a TakaraRepository with <B>TakaraBuilder</B>
+     *
      * @param entity
      */
     TakaraRepository(Entity entity) {
@@ -22,14 +23,17 @@ public class TakaraRepository {
 
     Entity entity;
 
+    public boolean heartbeat() {
+        Client client = ClientBuilder.newClient(new ClientConfig());
+        WebTarget target = client.target(this.entity.getGemisURI());
+        String response = target.request().accept(MediaType.TEXT_PLAIN).get(String.class);
+        return response != null && response.length() > 0;
+    }
+
     public Instrument get(long id) {
         Client client = ClientBuilder.newClient(new ClientConfig());
         WebTarget target = client.target(this.entity.getGemisURI()).path("" + id);
         var resp = target.request().accept(MediaType.APPLICATION_JSON).get();
-//        System.out.println(resp.readEntity(Bond.class));
-
-        System.out.println(resp.readEntity(String.class));
-        return null;
-//        return (Instrument) resp.readEntity(this.entity.getCls());
+        return (Instrument) resp.readEntity(this.entity.getCls());
     }
 }

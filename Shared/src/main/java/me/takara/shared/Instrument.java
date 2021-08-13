@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface Instrument {
 
-    long getId();
+    Long getId();
 
     String getName();
     void setName(String name);

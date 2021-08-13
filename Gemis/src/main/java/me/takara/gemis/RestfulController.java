@@ -3,6 +3,7 @@ package me.takara.gemis;
 import com.google.common.base.Stopwatch;
 import me.takara.gemis.entities.BondImp;
 import me.takara.shared.Instrument;
+import me.takara.shared.entities.InstrumentBase;
 import me.takara.shared.rest.WhereClause;
 
 import javax.ws.rs.*;
@@ -42,20 +43,22 @@ public class RestfulController {
         var obj = Gemis.getInstance().get(id);
 
         sw.stop();
-        log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
+
+        obj.ifPresent(a -> log.info(String.format("Return %s[%s:%s] | Cost:%,ds", a.getType(), a.getId(), a.getName(), sw.elapsed(TimeUnit.MILLISECONDS))));
         return obj.orElse(null);
     }
 
-//    @GET
-//    @Path("/where")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("/where")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public List<Instrument> getWhere(WhereClause whereClause) throws InterruptedException {
 
         final Stopwatch sw = Stopwatch.createStarted();
 
         List<Instrument> results = new ArrayList<>();
         results.add(new BondImp(whereClause.toString()));
+        results.add(new BondImp("HAHAHAHA"));
         Thread.sleep(1000L);
 
         sw.stop();

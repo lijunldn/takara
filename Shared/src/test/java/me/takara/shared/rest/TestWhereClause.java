@@ -1,5 +1,6 @@
 package me.takara.shared.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -10,13 +11,13 @@ import java.util.List;
 public class TestWhereClause extends TestCase {
     
     @Test
-    public void testGetterSetter() {
+    public void testGetterSetter() throws JsonProcessingException {
         WhereClause wc = new WhereClause() {{
             setWhere("name");
             setWhereOp("is");
-            setWhereContent(new ArrayList() {{ add("A"); add("B"); }});
+            //setWhereContent(new ArrayList() {{ add("A"); add("B"); }});
         }};
-        System.out.println(wc.toString());
+        System.out.println(wc.toJson());
     }
 
 }
