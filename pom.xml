@@ -31,7 +31,7 @@
 
     <properties>
         <jackson.version>2.12.3</jackson.version>
-        <jersey.version>2.22.2</jersey.version>
+        <jersey.version>2.29.1</jersey.version>
         <maven.compiler.source>10</maven.compiler.source>
         <maven.compiler.target>10</maven.compiler.target>
     </properties>

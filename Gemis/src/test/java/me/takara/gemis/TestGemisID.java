@@ -2,7 +2,6 @@ package me.takara.gemis;
 
 import me.takara.gemis.id.GemisID;
 import me.takara.shared.Entity;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TestGemisID {
 
@@ -41,7 +41,8 @@ public class TestGemisID {
     @Test
     public void testMultiThreading() {
 
-        Set<Long> ids = new ConcurrentHashSet<>();
+        ConcurrentHashMap<Long, Integer> map = new ConcurrentHashMap<>();
+        Set<Long> ids = map.newKeySet();
 
         CompletableFuture[] future = new CompletableFuture[10];
         for (int i = 0; i < 10; i++) {

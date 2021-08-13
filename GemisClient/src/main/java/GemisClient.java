@@ -1,7 +1,7 @@
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
-import me.takara.shared.client.TakaraBuilder;
-import me.takara.shared.client.TakaraRepository;
+import me.takara.client.TakaraBuilder;
+import me.takara.client.TakaraRepository;
 import me.takara.shared.entities.Bond;
 import org.glassfish.jersey.client.ClientConfig;
 

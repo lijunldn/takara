@@ -1,4 +1,4 @@
-package me.takara.shared.client;
+package me.takara.client;
 
 import me.takara.shared.Entity;
 

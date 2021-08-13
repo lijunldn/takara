@@ -5,7 +5,6 @@ import me.takara.gemis.operation.Strategy;
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
-import me.takara.shared.entities.Bond;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -14,6 +13,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.logging.Logger;
+
+//import org.eclipse.jetty.server.Server;
+//import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
+//import org.glassfish.jersey.server.ResourceConfig;
 
 //import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 
@@ -64,17 +67,24 @@ public class Gemis {
     }
 
     private static void startJetty(Entity entity) throws Exception {
+
+
         log.info("Starting jetty...");
         final ResourceConfig resourceConfig = new ResourceConfig(RestfulController.class);
 //        final SimpleServer server = SimpleContainerFactory.create(BASE_URI, resourceConfig);
         final Server server = JettyHttpContainerFactory.createServer(entity.getGemisURI(), resourceConfig, false);
+
+//        com.sun.jersey.api.core.ResourceConfig rc = new ClassNamesResourceConfig(RestfulController.class.getName());
+//        com.sun.jersey.api.core.ResourceConfig rc1 = new PackagesResourceConfig("me.takara.gemis");
+//        HttpServer server = GrizzlyServerFactory.createHttpServer(entity.getGemisURI(), rc);
+
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    log.info("Shutting down the application...");
+                    log.info("Gemis is shutting down...");
                     server.stop();
-                    log.info("THE END ... ");
+                    log.info("Bye for now... ");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

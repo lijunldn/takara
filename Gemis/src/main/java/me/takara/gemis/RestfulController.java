@@ -19,9 +19,8 @@ public class RestfulController {
     private String logTime = "Took %,ds";
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public String getHello() {
+    @Produces(MediaType.TEXT_PLAIN)
+    public String heartbeat() {
 
         final Stopwatch sw = Stopwatch.createStarted();
 
@@ -47,10 +46,10 @@ public class RestfulController {
         return obj.orElse(null);
     }
 
-    @GET
-    @Path("/where")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+//    @GET
+//    @Path("/where")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
     public List<Instrument> getWhere(WhereClause whereClause) throws InterruptedException {
 
         final Stopwatch sw = Stopwatch.createStarted();
