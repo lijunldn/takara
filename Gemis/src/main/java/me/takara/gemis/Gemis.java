@@ -5,13 +5,12 @@ import me.takara.gemis.operation.Strategy;
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
+import me.takara.shared.rest.SearchCriteria;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 //import org.eclipse.jetty.server.Server;
@@ -28,7 +27,7 @@ public class Gemis {
 
     Gemis(Entity entity) {
         this.entity = entity;
-        this.operator = new GemisOperator(data);
+        this.operator = new GemisStrategy(data);
         this.puller = new GemisPuller(data);
         log.info(String.format("Gemis %s running ... ", entity));
     }
@@ -50,7 +49,7 @@ public class Gemis {
     }
 
     private Entity entity;
-    private GemisOperator operator;
+    private GemisStrategy operator;
     private GemisPuller puller;
     private HashMap<SyncStamp, Instrument> data = new LinkedHashMap<>();
 
@@ -67,7 +66,6 @@ public class Gemis {
     }
 
     private static void startJetty(Entity entity) throws Exception {
-
 
         log.info("Starting jetty...");
         final ResourceConfig resourceConfig = new ResourceConfig(RestfulController.class);
@@ -97,13 +95,15 @@ public class Gemis {
     }
 
     public synchronized SyncStamp remove(Instrument item) {
-        var stamp = this.operator.execute(Strategy.getStrategy(Strategy.Operators.REMOVE), item);
-        if (stamp != null) {
-            log.info(String.format("Removed %s - %s", item, stamp));
+        var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.REMOVE), item);
+        if (keys.size() > 0) {
+            data.remove(keys.get(0));
+            log.info(String.format("Removed %s - %s", item.toJson(), keys.get(0)));
+            return keys.get(0);
         } else {
-            log.info(String.format("Cannot find %s", item));
+            log.warning(String.format("Cannot find %s", item.toJson()));
+            return null;
         }
-        return stamp;
     }
 
     public GemisPuller pullSinceTimeZero() {
@@ -116,18 +116,37 @@ public class Gemis {
 
     public synchronized SyncStamp add(Instrument item) {
 
-        SyncStamp key = this.operator.execute(Strategy.getStrategy(Strategy.Operators.ADD), item);
-        log.info(String.format("Added %s - %s", item, key));
-        return key;
+        var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.ADD), item);
+        if (keys.size() > 0) {
+            log.info(String.format("Added %s - %s", item.toJson(), keys.get(0)));
+            return keys.get(0);
+        }
+        return null;
     }
 
-    public Optional<Instrument> get(long id) {
+    public Instrument get(long id) {
 
-        SyncStamp key = this.operator.execute(Strategy.getStrategy(Strategy.Operators.GET), id);
-        if (key != null)
-            return Optional.of(data.get(key));
-        else
-            return Optional.empty();
+        var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.GET), id);
+        if (keys.size() > 0) {
+            var result = data.get(keys.get(0));
+            log.info(String.format("Found %s - %s", result.toJson(), keys.get(0)));
+            return data.get(keys.get(0));
+        }
+        log.warning(String.format("Cannot find %s [ID = %s]", entity, id));
+        return null;
+    }
+
+    public List<Instrument> search(SearchCriteria wh) {
+
+        var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.SEARCH), wh);
+        List<Instrument> results = new ArrayList<>();
+        if (keys.size() > 0) {
+            keys.forEach(k -> {
+                results.add(data.get(k));
+            });
+        }
+        log.info(String.format("Found %d %s(s)", results.size(), this.entity));
+        return results;
     }
 
     public int size() {

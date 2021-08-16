@@ -2,19 +2,18 @@ package me.takara.shared.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import junit.framework.TestCase;
+import me.takara.shared.entities.fields.BondFields;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class TestWhereClause extends TestCase {
     
     @Test
     public void testGetterSetter() throws JsonProcessingException {
-        WhereClause wc = new WhereClause() {{
-            setWhere("name");
-            setWhereOp("is");
+        SearchCriteria wc = new SearchCriteria() {{
+            setScope(Scope.GET_FIRST);
+            setOperator(Operator.EQ);
+            setL_value(BondFields.NAME.toString());
+            setR_value("12");
             //setWhereContent(new ArrayList() {{ add("A"); add("B"); }});
         }};
         System.out.println(wc.toJson());

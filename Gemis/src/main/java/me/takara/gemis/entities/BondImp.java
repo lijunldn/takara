@@ -6,7 +6,7 @@ import me.takara.shared.entities.Bond;
 
 public class BondImp extends Bond {
 
-    public final static BondImp EMPTY = new BondImp(0, "");
+    public final static BondImp EMPTY = new BondImp(Long.valueOf(0), "");
 
     public BondImp() {
     }
@@ -16,7 +16,7 @@ public class BondImp extends Bond {
         this(GemisID.generator(Entity.BOND).apply(1).get(0), name);
     }
 
-    public BondImp(long id, String name) {
+    public BondImp(Long id, String name) {
         this.id = id;
         this.name = name;
     }

@@ -28,4 +28,9 @@ public class GemisID {
         };
     }
 
+    static void reset() {
+        ids = new HashMap<>();
+        Entity.stream().forEach(e -> ids.put(e, new AtomicLong(0)));
+    }
+
 }

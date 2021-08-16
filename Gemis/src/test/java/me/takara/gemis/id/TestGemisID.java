@@ -1,8 +1,8 @@
-package me.takara.gemis;
+package me.takara.gemis.id;
 
-import me.takara.gemis.id.GemisID;
 import me.takara.shared.Entity;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -12,6 +12,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TestGemisID {
+
+    @Before
+    public void init() {
+        GemisID.reset();
+    }
 
     @Test
     public void testVanilla() {

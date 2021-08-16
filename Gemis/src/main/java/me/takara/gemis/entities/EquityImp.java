@@ -10,7 +10,7 @@ public class EquityImp extends Equity {
         this(GemisID.generator(Entity.EQUITY).apply(1).get(0), name);
     }
 
-    public EquityImp(long id, String name) {
+    public EquityImp(Long id, String name) {
         this.id = id;
         this.name = name;
     }

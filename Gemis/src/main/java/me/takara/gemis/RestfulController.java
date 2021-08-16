@@ -3,13 +3,13 @@ package me.takara.gemis;
 import com.google.common.base.Stopwatch;
 import me.takara.gemis.entities.BondImp;
 import me.takara.shared.Instrument;
-import me.takara.shared.entities.InstrumentBase;
-import me.takara.shared.rest.WhereClause;
+import me.takara.shared.rest.SearchCriteria;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -40,29 +40,35 @@ public class RestfulController {
 
         final Stopwatch sw = Stopwatch.createStarted();
 
-        var obj = Gemis.getInstance().get(id);
+        Instrument result = Gemis.getInstance().get(id);
 
         sw.stop();
 
-        obj.ifPresent(a -> log.info(String.format("Return %s[%s:%s] | Cost:%,ds", a.getType(), a.getId(), a.getName(), sw.elapsed(TimeUnit.MILLISECONDS))));
-        return obj.orElse(null);
+        if (result != null) {
+            log.info(String.format("getById returned %s[%s:%s] | Cost:%,ds", result.getType(), result.getId(), result.getName(), sw.elapsed(TimeUnit.MILLISECONDS)));
+        } else {
+            log.info(String.format("getById returned NULL | Cost:%,ds", sw.elapsed(TimeUnit.MILLISECONDS)));
+        }
+        return result;
     }
 
-    @GET
+    @POST
     @Path("/where")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<Instrument> getWhere(WhereClause whereClause) throws InterruptedException {
+    public List<Instrument> getWhere(SearchCriteria whereClause) {
 
         final Stopwatch sw = Stopwatch.createStarted();
 
-        List<Instrument> results = new ArrayList<>();
-        results.add(new BondImp(whereClause.toString()));
-        results.add(new BondImp("HAHAHAHA"));
-        Thread.sleep(1000L);
+        List<Instrument> results = Gemis.getInstance().search(whereClause);
+
+//        List<Instrument> results = new ArrayList<>();
+//        results.add(new BondImp(whereClause.toString()));
+//        results.add(new BondImp("HAHAHAHA"));
 
         sw.stop();
-        log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
+        log.info(String.format("getWhere (%s) returned %d items | Cost:%,ds ",
+                whereClause, results.size(), sw.elapsed(TimeUnit.MILLISECONDS)));
         return results;
     }
 

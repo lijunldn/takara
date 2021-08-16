@@ -1,9 +1,13 @@
 package me.takara.gemis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import me.takara.gemis.entities.BondImp;
+import me.takara.gemis.entities.EquityImp;
 import me.takara.shared.Entity;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.entities.Bond;
+import me.takara.shared.entities.Equity;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,66 +20,26 @@ public class TestGemis {
             Gemis gms = new Gemis(e);
             Assert.assertEquals(e.getName(), gms.getType().getName());
             Assert.assertEquals(0, gms.size());
-            Assert.assertFalse(gms.get(1).isPresent());
+            Assert.assertNull(gms.get(1));
         });
     }
 
     @Test
-    public void testGemisRemove() {
+    public void testGemisItemJson() throws JsonProcessingException {
+        Bond bond = new BondImp(Long.valueOf(1), "A BOND");
 
-        Gemis gms = new Gemis(Entity.BOND);
-
-        Bond b1 = new BondImp(100, "Morgan Stanley");
-        SyncStamp stamp1 = gms.add(b1);
-        Bond b2 = new BondImp(200, "Nomura");
-        SyncStamp stamp2 = gms.add(b2);
-        Bond b3 = new BondImp(300, "Barcap");
-
-        Assert.assertEquals(2, gms.size());
-        gms.remove(b1); // remove b1, expect -1
-        Assert.assertEquals(1, gms.size());
-        gms.remove(b1); // remove b1 again, expect no impact
-        Assert.assertEquals(1, gms.size());
-        gms.remove(b3); // remove b3, expect no impact
-        Assert.assertEquals(1, gms.size());
-        gms.remove(b2); // remove b2, expect -1
-        Assert.assertEquals(0, gms.size());
+        String msg = new ObjectMapper().writeValueAsString(bond);
+        Assert.assertEquals("{\"type\":\"BOND\",\"id\":1,\"name\":\"A BOND\"}", msg);
     }
 
     @Test
-    public void testGemisAdd() {
+    public void testGemisItemIncrementalID() {
+        Bond bd1 = new BondImp("A");
+        Bond bd2 = new BondImp("B");
+        Assert.assertTrue(bd1.getId() < bd2.getId());
 
-        Gemis gms = new Gemis(Entity.BOND);
-
-        Bond b1 = new BondImp(100, "Morgan Stanley");
-        SyncStamp stamp = gms.add(b1);
-        Assert.assertEquals(1, gms.size());
-        var tmp = gms.get(b1.getId());
-        Assert.assertTrue(tmp.isPresent());
-        Assert.assertEquals(b1.getName(), tmp.get().getName());
-        Assert.assertEquals(b1.getId(), tmp.get().getId());
-
-        // add same bond again
-        SyncStamp stampX = gms.add(b1);
-        Assert.assertEquals(1, gms.size());
-        var tmpX = gms.get(100);
-        Assert.assertEquals("Morgan Stanley", tmpX.get().getName());
-        Assert.assertEquals(1, stampX.compareTo(stamp));
-
-        // add same bond with a new name (same ID)
-        b1.setName("Merrill Lynch");
-        SyncStamp stampMerrill = gms.add(b1);
-        Assert.assertEquals(1, gms.size());
-        var tmpMerrill = gms.get(100);
-        Assert.assertEquals("Merrill Lynch", tmpX.get().getName());
-        Assert.assertEquals(1, stampMerrill.compareTo(stamp));
-
-        Bond b2 = new BondImp(200, "Nomura");
-        SyncStamp stamp2 = gms.add(b2);
-        Assert.assertEquals(2, gms.size());
-        var tmp2 = gms.get(b2.getId());
-        Assert.assertEquals(b2.getName(), tmp2.get().getName());
-        Assert.assertEquals(b2.getId(), tmp2.get().getId());
+        Equity eq1 = new EquityImp("E");
+        Assert.assertTrue(eq1.getId() < bd2.getId());
 
     }
 

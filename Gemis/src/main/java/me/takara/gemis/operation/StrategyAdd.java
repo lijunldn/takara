@@ -3,18 +3,23 @@ package me.takara.gemis.operation;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 class StrategyAdd implements Strategy {
 
-    public SyncStamp execute(HashMap<SyncStamp, Instrument> data, Instrument item) {
+    public List<SyncStamp> execute(HashMap<SyncStamp, Instrument> data, Instrument item) {
 
         // remove existing
-        new StrategyRemove().execute(data, item);
+        var stamps = new StrategyRemove().execute(data, item);
+        stamps.forEach(s -> data.remove(s));
 
         // new
         SyncStamp newKey = SyncStamp.create(item.getId());
         data.put(newKey, item);
-        return newKey;
+        return new ArrayList<>() {{
+            add(newKey);
+        }};
     }
 }

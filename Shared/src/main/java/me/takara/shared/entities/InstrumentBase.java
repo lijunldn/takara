@@ -2,11 +2,13 @@ package me.takara.shared.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import me.takara.shared.Instrument;
 
+@Data
 public abstract class InstrumentBase implements Instrument {
 
-    protected Long id;
+    protected long id;
 
     protected String name;
 
@@ -28,20 +30,4 @@ public abstract class InstrumentBase implements Instrument {
     public int hashCode() {
         return String.valueOf(this.id).hashCode();
     }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
 }
