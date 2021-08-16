@@ -18,6 +18,7 @@ public class TestTracker {
 
     @Before
     public void init() {
+
         this.gemis = new Gemis(Entity.BOND);
     }
 

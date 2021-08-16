@@ -33,12 +33,18 @@ public class CriteriaBuilder<T> {
     }
 
     public CriteriaBuilder lessThan(BondFields fields, T v) {
+        criteria.setL_value(fields.toString());
+        criteria.setR_value(v.toString());
+        criteria.setOperator(SearchCriteria.Operator.LT);
         return this;
     }
 
-    public List<Instrument> getResultList() {
+    public List<Instrument> fetchFirstOnly() {
         criteria.setScope(SearchCriteria.Scope.GET_FIRST);
         return callback.apply(criteria);
     }
-
+    public List<Instrument> fetchAll() {
+        criteria.setScope(SearchCriteria.Scope.GET_ALL);
+        return callback.apply(criteria);
+    }
 }

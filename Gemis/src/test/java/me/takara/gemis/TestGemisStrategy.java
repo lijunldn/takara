@@ -76,5 +76,14 @@ public class TestGemisStrategy {
         wh.setR_value("300");
         bonds = gms.search(wh);
         Assert.assertEquals(0, bonds.size());
+
+        wh.setOperator(SearchCriteria.Operator.LT);
+        wh.setScope(SearchCriteria.Scope.GET_ALL);
+        bonds = gms.search(wh);
+        Assert.assertEquals(2, bonds.size());
+
+        wh.setOperator(SearchCriteria.Operator.GT);
+        bonds = gms.search(wh);
+        Assert.assertEquals(0, bonds.size());
     }
 }

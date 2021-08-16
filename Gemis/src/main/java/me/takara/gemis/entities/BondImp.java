@@ -21,7 +21,12 @@ public class BondImp extends Bond {
         this.name = name;
     }
 
-//    public static Bond of(String json) throws JsonProcessingException {
+    @Override
+    public String toString() {
+        return String.format("[%s|%s]", id, name);
+    }
+
+    //    public static Bond of(String json) throws JsonProcessingException {
 //        return new ObjectMapper().readValue(json, Bond.class);
 //    }
 }

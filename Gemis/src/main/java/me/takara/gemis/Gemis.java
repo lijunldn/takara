@@ -98,10 +98,10 @@ public class Gemis {
         var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.REMOVE), item);
         if (keys.size() > 0) {
             data.remove(keys.get(0));
-            log.info(String.format("Removed %s - %s", item.toJson(), keys.get(0)));
+            log.info(String.format("Removed %s:%s - %s", entity, item, keys.get(0)));
             return keys.get(0);
         } else {
-            log.warning(String.format("Cannot find %s", item.toJson()));
+            log.warning(String.format("Cannot find %s:%s", entity, item));
             return null;
         }
     }
@@ -118,7 +118,7 @@ public class Gemis {
 
         var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.ADD), item);
         if (keys.size() > 0) {
-            log.info(String.format("Added %s - %s", item.toJson(), keys.get(0)));
+            log.info(String.format("Added %s:%s - %s", entity, item, keys.get(0)));
             return keys.get(0);
         }
         return null;
@@ -129,15 +129,17 @@ public class Gemis {
         var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.GET), id);
         if (keys.size() > 0) {
             var result = data.get(keys.get(0));
-            log.info(String.format("Found %s - %s", result.toJson(), keys.get(0)));
+            log.info(String.format("Found %s:%s - %s", entity, result, keys.get(0)));
             return data.get(keys.get(0));
         }
-        log.warning(String.format("Cannot find %s [ID = %s]", entity, id));
+        log.warning(String.format("Cannot find %s:[%s]", entity, id));
         return null;
     }
 
     public List<Instrument> search(SearchCriteria wh) {
 
+        String w = wh.toJson();
+        log.info("Search criteria - " + w);
         var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.SEARCH), wh);
         List<Instrument> results = new ArrayList<>();
         if (keys.size() > 0) {

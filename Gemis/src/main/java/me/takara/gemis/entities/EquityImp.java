@@ -14,4 +14,9 @@ public class EquityImp extends Equity {
         this.id = id;
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%s|%s]", id, name);
+    }
 }

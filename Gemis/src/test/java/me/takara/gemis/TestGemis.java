@@ -29,7 +29,7 @@ public class TestGemis {
         Bond bond = new BondImp(Long.valueOf(1), "A BOND");
 
         String msg = new ObjectMapper().writeValueAsString(bond);
-        Assert.assertEquals("{\"type\":\"BOND\",\"id\":1,\"name\":\"A BOND\"}", msg);
+        Assert.assertEquals("{\"id\":1,\"name\":\"A BOND\"}", msg);
     }
 
     @Test

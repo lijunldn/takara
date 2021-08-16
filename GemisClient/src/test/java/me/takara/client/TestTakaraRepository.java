@@ -15,29 +15,33 @@ public class TestTakaraRepository extends TestCase {
         try {
             return TakaraBuilder.create(Entity.BOND).heartbeat();
         } catch (Exception ex) {
+            System.out.println("No Gemis service!");
             return false;
         }
     }
 
     @Test
     public void testGet() {
+        if (!gemisReady()) return;
 
-        if (gemisReady()) {
-            var repo = TakaraBuilder.create(Entity.BOND);
-            Instrument item = repo.get(12);
-            Assert.assertEquals(12, item.getId());
-        }
+        var repo = TakaraBuilder.create(Entity.BOND);
+        Instrument item = repo.get(12);
+        Assert.assertEquals(12, item.getId());
     }
 
     @Test
     public void testWhere() {
-
         if (!gemisReady()) return;
 
         var repo = TakaraBuilder.create(Entity.BOND);
-        List<Instrument> a = repo.where().equal(BondFields.ID, 2).getResultList();
-        a.forEach(b -> System.out.println(b.getId()));
+        List<Instrument> results = repo.where().equal(BondFields.ID, 22).fetchFirstOnly();
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(22, results.get(0).getId());
 
-        a.forEach(b -> System.out.println(b.getName()));
+        results = repo.where().lessThan(BondFields.ID, 22).fetchAll();
+        Assert.assertEquals(22, results.size());
+
+        results = repo.where().lessThan(BondFields.ID, 22).fetchFirstOnly();
+        Assert.assertEquals(1, results.size());
     }
 }

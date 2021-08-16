@@ -67,8 +67,8 @@ public class RestfulController {
 //        results.add(new BondImp("HAHAHAHA"));
 
         sw.stop();
-        log.info(String.format("getWhere (%s) returned %d items | Cost:%,ds ",
-                whereClause, results.size(), sw.elapsed(TimeUnit.MILLISECONDS)));
+        log.info(String.format("getWhere (%s) returned %d %s(s) | Cost:%,ds ",
+                whereClause, results.size(), Gemis.getInstance().getType(), sw.elapsed(TimeUnit.MILLISECONDS)));
         return results;
     }
 

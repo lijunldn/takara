@@ -37,6 +37,7 @@ public class SearchCriteria {
 
         @Override
         public String toString() { return op; }
+
     }
 
     public enum Scope {

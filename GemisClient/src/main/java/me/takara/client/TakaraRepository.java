@@ -45,10 +45,10 @@ public class TakaraRepository {
     }
 
     public CriteriaBuilder where() {
-        return new CriteriaBuilder(a -> this.getFirst((SearchCriteria)a));
+        return new CriteriaBuilder(a -> this.queryGemis((SearchCriteria)a));
     }
 
-    private List<Instrument> getFirst(SearchCriteria wh) {
+    private List<Instrument> queryGemis(SearchCriteria wh) {
 
         Client client = ClientBuilder.newClient(new ClientConfig());
         WebTarget target = client.target(this.entity.getGemisURI()).path("where");
