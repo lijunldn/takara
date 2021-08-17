@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import me.takara.gemis.entities.BondImp;
 import me.takara.gemis.operation.Strategy;
 import me.takara.shared.Entity;
+import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.entities.Bond;
 import me.takara.shared.entities.fields.BondFields;
@@ -18,7 +19,7 @@ public class TestGemisStrategy {
 
     @Before
     public void init() {
-        gms = new Gemis(Entity.BOND);
+        gms = Gemis.forceCreate(Entity.BOND);
     }
 
     @Test
@@ -46,15 +47,17 @@ public class TestGemisStrategy {
     }
 
     @Test
-    public void testRemove() {
+    public void testDeactivate() {
         Bond b1 = new BondImp(Long.valueOf(100), "Morgan Stanley");
         SyncStamp stamp1 = gms.add(b1);
-
         Assert.assertEquals(1, gms.size());
-        gms.remove(b1);
-        Assert.assertEquals(0, gms.size());
-        gms.remove(b1);
-        Assert.assertEquals(0, gms.size());
+        Assert.assertEquals("ACTIVE", b1.getStatus());
+
+        SyncStamp stamp2 = gms.deactivate(b1);
+        Assert.assertTrue(stamp1.compareTo(stamp2) == -1); // syncstamp should be increased
+        var b2 = gms.get(100);
+        Assert.assertEquals("INACTIVE", b1.getStatus());
+        Assert.assertEquals(1, gms.size());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package me.takara.gemis;
 
 import me.takara.gemis.entities.BondImp;
+import me.takara.gemis.id.GemisID;
 import me.takara.gemis.operation.Strategy;
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
@@ -23,18 +24,29 @@ public class Gemis {
 
     private static Logger log = Logger.getLogger(Gemis.class.getName());
 
+    /**
+     * Gemis is a singleton
+     */
     private volatile static Gemis instance;
 
-    Gemis(Entity entity) {
+    /**
+     * Type of Entity objects this Gemis stored
+     */
+    private Entity entity;
+
+    /**
+     * Core dataset
+     */
+    private HashMap<SyncStamp, Instrument> data = new LinkedHashMap<>();
+
+    private Gemis(Entity entity) {
         this.entity = entity;
-        this.operator = new GemisStrategy(data);
-        this.puller = new GemisPuller(data);
         log.info(String.format("Gemis %s running ... ", entity));
     }
 
-    public static Gemis getInstance() {
-        assert instance == null;
-        return instance;
+    public static Gemis forceCreate(Entity entity) {
+        instance = null;
+        return create(entity);
     }
 
     public static Gemis create(Entity entity) {
@@ -48,10 +60,18 @@ public class Gemis {
         return instance;
     }
 
-    private Entity entity;
-    private GemisStrategy operator;
-    private GemisPuller puller;
-    private HashMap<SyncStamp, Instrument> data = new LinkedHashMap<>();
+    public static Gemis getInstance() {
+        assert instance == null;
+        return instance;
+    }
+
+    private GemisStrategy getStrategy(Strategy.Operators op) {
+        return new GemisStrategy(data, op);
+    }
+
+    public GemisPuller getPuller() {
+        return new GemisPuller(data);
+    }
 
     public static void main(String[] args) throws Exception {
 
@@ -94,29 +114,34 @@ public class Gemis {
         Thread.currentThread().join();
     }
 
-    public synchronized SyncStamp remove(Instrument item) {
-        var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.REMOVE), item);
+    /**
+     * Instrument can only be soft deleted from the Gemis
+     * @param item
+     * @return
+     */
+    public synchronized SyncStamp deactivate(Instrument item) {
+
+        item.deactivate();
+
+        var keys = this.getStrategy(Strategy.Operators.ADD).execute(item);
         if (keys.size() > 0) {
-            data.remove(keys.get(0));
-            log.info(String.format("Removed %s:%s - %s", entity, item, keys.get(0)));
+            log.info(String.format("Deactivated %s:%s - %s", entity, item, keys.get(0)));
             return keys.get(0);
-        } else {
-            log.warning(String.format("Cannot find %s:%s", entity, item));
-            return null;
         }
+        return null;
     }
 
     public GemisPuller pullSinceTimeZero() {
-        return this.puller.of(SyncStamp.ZERO);
+        return this.getPuller().of(SyncStamp.ZERO);
     }
 
     public GemisPuller pullSince(SyncStamp stamp) {
-        return this.puller.of(stamp);
+        return this.getPuller().of(stamp);
     }
 
     public synchronized SyncStamp add(Instrument item) {
 
-        var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.ADD), item);
+        var keys = this.getStrategy(Strategy.Operators.ADD).execute(item);
         if (keys.size() > 0) {
             log.info(String.format("Added %s:%s - %s", entity, item, keys.get(0)));
             return keys.get(0);
@@ -126,7 +151,7 @@ public class Gemis {
 
     public Instrument get(long id) {
 
-        var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.GET), id);
+        var keys = this.getStrategy(Strategy.Operators.GET).execute(id);
         if (keys.size() > 0) {
             var result = data.get(keys.get(0));
             log.info(String.format("Found %s:%s - %s", entity, result, keys.get(0)));
@@ -140,7 +165,7 @@ public class Gemis {
 
         String w = wh.toJson();
         log.info("Search criteria - " + w);
-        var keys = this.operator.execute(Strategy.getStrategy(Strategy.Operators.SEARCH), wh);
+        var keys = this.getStrategy(Strategy.Operators.SEARCH).execute(wh);
         List<Instrument> results = new ArrayList<>();
         if (keys.size() > 0) {
             keys.forEach(k -> {

@@ -10,6 +10,13 @@ import java.util.Optional;
 
 class StrategyRemove implements Strategy {
 
+    /**
+     * Internal use ONLY
+     * External soft delete (Instrument.status ACTIVE -> INACTIVE) ONLY
+     * @param data
+     * @param item
+     * @return
+     */
     public List<SyncStamp> execute(HashMap<SyncStamp, Instrument> data, Instrument item) {
 
         Optional<SyncStamp> key = data.keySet().stream().filter(a -> a.getId() == item.getId()).findFirst();

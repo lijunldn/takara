@@ -4,7 +4,6 @@ import me.takara.gemis.entities.BondImp;
 import me.takara.shared.Entity;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
-import me.takara.shared.entities.Bond;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +18,7 @@ public class TestTracker {
     @Before
     public void init() {
 
-        this.gemis = new Gemis(Entity.BOND);
+        this.gemis = Gemis.create(Entity.BOND);
     }
 
     private SyncStamp createSampleData(int total) {
@@ -32,7 +31,7 @@ public class TestTracker {
 
     private List<Instrument> pull(GemisPuller puller) {
         List<Instrument> list = new ArrayList<>(10);
-        while (puller.hasMoreItems()) {
+        while (puller.hasMore()) {
 
             // verify the order
             var bds = puller.next(2);

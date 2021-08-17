@@ -17,7 +17,7 @@ public interface Strategy {
 
     default List<SyncStamp> execute(HashMap<SyncStamp, Instrument> data, SearchCriteria wh) { return Collections.emptyList(); }
 
-    enum Operators {ADD, GET, REMOVE, SEARCH};
+    enum Operators {ADD, GET, SEARCH};
 
     static Strategy getStrategy(Operators op) {
         switch (op) {
@@ -25,8 +25,8 @@ public interface Strategy {
                 return new StrategyAdd();
             case GET:
                 return new StrategyGet();
-            case REMOVE:
-                return new StrategyRemove();
+//            case REMOVE:
+//                return new StrategyRemove();
             case SEARCH:
                 return new StrategySearch();
         }

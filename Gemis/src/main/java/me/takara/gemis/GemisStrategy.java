@@ -11,20 +11,22 @@ import java.util.List;
 public class GemisStrategy {
 
     private HashMap<SyncStamp, Instrument> data;
+    private Strategy strategy;
 
-    public GemisStrategy(HashMap<SyncStamp, Instrument> data) {
+    public GemisStrategy(HashMap<SyncStamp, Instrument> data, Strategy.Operators op) {
         this.data = data;
+        this.strategy = Strategy.getStrategy(op);
     }
 
-    public List<SyncStamp> execute(Strategy strategy, Instrument item) {
+    public List<SyncStamp> execute(Instrument item) {
         return strategy.execute(data, item);
     }
 
-    public List<SyncStamp> execute(Strategy strategy, long id) {
+    public List<SyncStamp> execute(long id) {
         return strategy.execute(data, id);
     }
 
-    public List<SyncStamp> execute(Strategy strategy, SearchCriteria wh) {
+    public List<SyncStamp> execute(SearchCriteria wh) {
         return strategy.execute(data, wh);
     }
 

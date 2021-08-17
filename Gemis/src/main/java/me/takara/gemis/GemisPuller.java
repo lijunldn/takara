@@ -49,7 +49,7 @@ class GemisPuller {
         return result;
     }
 
-    public boolean hasMoreItems() {
+    public boolean hasMore() {
         return data.keySet().stream().anyMatch(a -> a.compareTo(this.begin) > 0);
     }
 }

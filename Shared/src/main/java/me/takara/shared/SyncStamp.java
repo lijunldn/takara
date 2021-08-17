@@ -47,6 +47,8 @@ public class SyncStamp implements Comparable<SyncStamp> {
         return id;
     }
 
+    public long getTimestamp() { return this.timestamp; }
+
     @Override
     public int compareTo(SyncStamp o) {
         if (this.timestamp < o.timestamp) return -1;

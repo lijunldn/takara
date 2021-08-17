@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class TestTakaraRepository extends TestCase {
+public class TestTakaraRepository {
 
     boolean gemisReady() {
         try {
@@ -44,4 +44,5 @@ public class TestTakaraRepository extends TestCase {
         results = repo.where().lessThan(BondFields.ID, 22).fetchFirstOnly();
         Assert.assertEquals(1, results.size());
     }
+
 }

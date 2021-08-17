@@ -23,10 +23,6 @@ public class BondImp extends Bond {
 
     @Override
     public String toString() {
-        return String.format("[%s|%s]", id, name);
+        return String.format("[%s|%s|%s]", id, name, status);
     }
-
-    //    public static Bond of(String json) throws JsonProcessingException {
-//        return new ObjectMapper().readValue(json, Bond.class);
-//    }
 }

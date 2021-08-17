@@ -1,15 +1,13 @@
 package me.takara.gemis;
 
 import com.google.common.base.Stopwatch;
-import me.takara.gemis.entities.BondImp;
 import me.takara.shared.Instrument;
+import me.takara.shared.SyncStamp;
 import me.takara.shared.rest.SearchCriteria;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -62,10 +60,6 @@ public class RestfulController {
 
         List<Instrument> results = Gemis.getInstance().search(whereClause);
 
-//        List<Instrument> results = new ArrayList<>();
-//        results.add(new BondImp(whereClause.toString()));
-//        results.add(new BondImp("HAHAHAHA"));
-
         sw.stop();
         log.info(String.format("getWhere (%s) returned %d %s(s) | Cost:%,ds ",
                 whereClause, results.size(), Gemis.getInstance().getType(), sw.elapsed(TimeUnit.MILLISECONDS)));
@@ -86,4 +80,20 @@ public class RestfulController {
 //        log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
 //        return stamp;
 //    }
+
+    @POST
+    @Path("/tracker/hasNext")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Boolean hasNext(SyncStamp stamp) {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        Boolean result = Gemis.getInstance().getPuller().of(stamp).hasMore();;
+
+        sw.stop();
+        log.info(String.format("hasNext (%s) returned %s | Cost:%,ds ",
+                stamp, result, sw.elapsed(TimeUnit.MILLISECONDS)));
+        return result;
+    }
 }

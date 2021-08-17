@@ -17,6 +17,6 @@ public class EquityImp extends Equity {
 
     @Override
     public String toString() {
-        return String.format("[%s|%s]", id, name);
+        return String.format("[%s|%s|%s]", id, name, status);
     }
 }

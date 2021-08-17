@@ -16,12 +16,10 @@ public class TestGemis {
     @Test
     public void testCreateGemis() {
 
-        Entity.stream().forEach(e -> {
-            Gemis gms = new Gemis(e);
-            Assert.assertEquals(e.getName(), gms.getType().getName());
-            Assert.assertEquals(0, gms.size());
-            Assert.assertNull(gms.get(1));
-        });
+        Gemis gms = Gemis.create(Entity.EQUITY);
+        Assert.assertEquals(Entity.EQUITY, gms.getType());
+        Assert.assertEquals(0, gms.size());
+        Assert.assertNull(gms.get(1));
     }
 
     @Test
@@ -29,7 +27,7 @@ public class TestGemis {
         Bond bond = new BondImp(Long.valueOf(1), "A BOND");
 
         String msg = new ObjectMapper().writeValueAsString(bond);
-        Assert.assertEquals("{\"id\":1,\"name\":\"A BOND\"}", msg);
+        Assert.assertEquals("{\"id\":1,\"name\":\"A BOND\",\"status\":\"ACTIVE\"}", msg);
     }
 
     @Test
