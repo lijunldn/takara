@@ -1,6 +1,6 @@
 package me.takara.gemis.id;
 
-import me.takara.shared.Entity;
+import me.takara.shared.TakaraEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,16 +11,16 @@ import java.util.function.Function;
 
 public class GemisID {
 
-    private static Map<Entity, AtomicLong> ids = new HashMap<>();
+    private static Map<TakaraEntity, AtomicLong> ids = new HashMap<>();
 
     static {
-        Entity.stream().forEach(e -> ids.put(e, new AtomicLong(0)));
+        TakaraEntity.stream().forEach(e -> ids.put(e, new AtomicLong(0)));
     }
 
-    public static Function<Integer, List<Long>> generator(Entity entity) {
+    public static Function<Integer, List<Long>> generator(TakaraEntity takaraEntity) {
         return n -> {
             List<Long> results = new ArrayList<>();
-            AtomicLong r = ids.get(entity);
+            AtomicLong r = ids.get(takaraEntity);
             for (int i = 0; i < n; i++) {
                 results.add(r.incrementAndGet());
             }
@@ -30,7 +30,7 @@ public class GemisID {
 
     static void reset() {
         ids = new HashMap<>();
-        Entity.stream().forEach(e -> ids.put(e, new AtomicLong(0)));
+        TakaraEntity.stream().forEach(e -> ids.put(e, new AtomicLong(0)));
     }
 
 }

@@ -2,12 +2,14 @@ package me.takara.gemis;
 
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
+import me.takara.shared.rest.TrackerResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class GemisPuller {
 
@@ -29,13 +31,18 @@ class GemisPuller {
         this.begin = stamp;
     }
 
-    public List<Instrument> next(int page) {
+    Stream<SyncStamp> applyFilter() {
+        return data.keySet().stream().filter(
+                a -> a.compareTo(this.begin) >= 0 && a.getId() > this.begin.getId());
+    }
 
-        List<SyncStamp> keys = data.keySet().stream().filter(a -> a.compareTo(this.begin) > 0).limit(page).collect(Collectors.toList());
+    public TrackerResponse next(int page) {
 
-        List<Instrument> result = new ArrayList<>(page);
+        List<SyncStamp> keys = applyFilter().limit(page).collect(Collectors.toList());
+
+        List<Instrument> results = new ArrayList<>(page);
         keys.forEach(k -> {
-            result.add(data.get(k));
+            results.add(data.get(k));
         });
 
         // offset the starting point
@@ -44,9 +51,12 @@ class GemisPuller {
             this.begin = keys.get(keys.size() - 1);
         }
 
-        log.info(String.format("Pulled %s items - %s => %s", result.size(), ex, this.begin));
+        log.info(String.format("Pulled %s items - %s => %s", results.size(), ex, this.begin));
 
-        return result;
+        return new TrackerResponse() {{
+            setStamp(begin);
+            setInstruments(results);
+        }};
     }
 
     public boolean hasMore() {

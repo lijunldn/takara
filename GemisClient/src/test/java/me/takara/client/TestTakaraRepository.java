@@ -1,7 +1,7 @@
 package me.takara.client;
 
-import junit.framework.TestCase;
-import me.takara.shared.Entity;
+import me.takara.shared.TakaraContext;
+import me.takara.shared.TakaraEntity;
 import me.takara.shared.Instrument;
 import me.takara.shared.entities.fields.BondFields;
 import org.junit.Assert;
@@ -13,7 +13,7 @@ public class TestTakaraRepository {
 
     boolean gemisReady() {
         try {
-            return TakaraBuilder.create(Entity.BOND).heartbeat();
+            return TakaraBuilder.create(TakaraContext.BOND_MASTER_LOCAL).heartbeat();
         } catch (Exception ex) {
             System.out.println("No Gemis service!");
             return false;
@@ -24,7 +24,7 @@ public class TestTakaraRepository {
     public void testGet() {
         if (!gemisReady()) return;
 
-        var repo = TakaraBuilder.create(Entity.BOND);
+        var repo = TakaraBuilder.create(TakaraContext.BOND_MASTER_LOCAL);
         Instrument item = repo.get(12);
         Assert.assertEquals(12, item.getId());
     }
@@ -33,7 +33,7 @@ public class TestTakaraRepository {
     public void testWhere() {
         if (!gemisReady()) return;
 
-        var repo = TakaraBuilder.create(Entity.BOND);
+        var repo = TakaraBuilder.create(TakaraContext.BOND_MASTER_LOCAL);
         List<Instrument> results = repo.where().equal(BondFields.ID, 22).fetchFirstOnly();
         Assert.assertEquals(1, results.size());
         Assert.assertEquals(22, results.get(0).getId());

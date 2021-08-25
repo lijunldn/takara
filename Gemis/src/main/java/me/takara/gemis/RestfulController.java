@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.rest.SearchCriteria;
+import me.takara.shared.rest.TrackerResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -23,11 +24,11 @@ public class RestfulController {
 
         final Stopwatch sw = Stopwatch.createStarted();
 
-        String name = Gemis.getInstance().getType().getName();
+        String name = Gemis.getInstance().heartbeat();
 
         sw.stop();
         log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
-        return String.format("HELLO! I'm your %s Gemis.", name);
+        return String.format("HELLO! %s", name);
     }
 
     @Path("/{id}")
@@ -83,17 +84,35 @@ public class RestfulController {
 
     @POST
     @Path("/tracker/hasNext")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Boolean hasNext(SyncStamp stamp) {
+    public boolean hasNext(SyncStamp stamp) {
 
         final Stopwatch sw = Stopwatch.createStarted();
 
-        Boolean result = Gemis.getInstance().getPuller().of(stamp).hasMore();;
+        var result = Gemis.getInstance().getPuller().of(stamp).hasMore();
 
         sw.stop();
-        log.info(String.format("hasNext (%s) returned %s | Cost:%,ds ",
+        log.info(String.format("puller hasNext (%s) returned %s | Cost:%,ds ",
                 stamp, result, sw.elapsed(TimeUnit.MILLISECONDS)));
         return result;
+    }
+
+    @POST
+    @Path("/tracker/next/{pagesize}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public TrackerResponse getNext(@PathParam("pagesize") int pagesize, SyncStamp stamp) {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        var response = Gemis.getInstance().getPuller().of(stamp).next(pagesize);
+
+        sw.stop();
+        log.info(String.format("puller getNext returned %d %s(s) - %s => %s. | Cost:%,ds ",
+                response.getInstruments().size(), Gemis.getInstance().getType(),
+                stamp, response.getStamp(),
+                sw.elapsed(TimeUnit.MILLISECONDS)));
+        return response;
     }
 }

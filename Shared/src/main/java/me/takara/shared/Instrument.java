@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public interface Instrument {
 
     @JsonIgnore
-    Entity getType();
+    TakaraEntity getType();
 
     long getId();
 

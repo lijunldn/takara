@@ -1,10 +1,8 @@
 package me.takara.gemis;
 
-import junit.framework.TestCase;
 import me.takara.gemis.entities.BondImp;
-import me.takara.gemis.operation.Strategy;
-import me.takara.shared.Entity;
-import me.takara.shared.Instrument;
+import me.takara.shared.TakaraContext;
+import me.takara.shared.TakaraEntity;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.entities.Bond;
 import me.takara.shared.entities.fields.BondFields;
@@ -18,8 +16,8 @@ public class TestGemisStrategy {
     private Gemis gms;
 
     @Before
-    public void init() {
-        gms = Gemis.forceCreate(Entity.BOND);
+    public synchronized void init() {
+        gms = Gemis.forceCreate(TakaraContext.BOND_MASTER_LOCAL);
     }
 
     @Test

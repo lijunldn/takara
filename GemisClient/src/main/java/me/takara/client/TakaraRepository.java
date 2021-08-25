@@ -1,7 +1,8 @@
 package me.takara.client;
 
 import me.takara.client.query.CriteriaBuilder;
-import me.takara.shared.Entity;
+import me.takara.shared.TakaraContext;
+import me.takara.shared.TakaraEntity;
 import me.takara.shared.Instrument;
 import me.takara.shared.entities.Bond;
 import me.takara.shared.entities.Equity;
@@ -15,33 +16,32 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class TakaraRepository {
 
     /**
      * Constructs a TakaraRepository with <B>TakaraBuilder</B>
      *
-     * @param entity
+     * @param context
      */
-    TakaraRepository(Entity entity) {
-        this.entity = entity;
+    TakaraRepository(TakaraContext context) {
+        this.context = context;
     }
 
-    Entity entity;
+    TakaraContext context;
 
     public boolean heartbeat() {
         Client client = ClientBuilder.newClient(new ClientConfig());
-        WebTarget target = client.target(this.entity.getGemisURI());
+        WebTarget target = client.target(this.context.getGemisURI());
         String response = target.request().accept(MediaType.TEXT_PLAIN).get(String.class);
         return response != null && response.length() > 0;
     }
 
     public Instrument get(long id) {
         Client client = ClientBuilder.newClient(new ClientConfig());
-        WebTarget target = client.target(this.entity.getGemisURI()).path("" + id);
+        WebTarget target = client.target(this.context.getGemisURI()).path("" + id);
         var resp = target.request().accept(MediaType.APPLICATION_JSON).get();
-        return (Instrument) resp.readEntity(this.entity.getCls());
+        return (Instrument) resp.readEntity(this.context.getEntity().getCls());
     }
 
     public CriteriaBuilder where() {
@@ -51,7 +51,7 @@ public class TakaraRepository {
     private List<Instrument> queryGemis(SearchCriteria wh) {
 
         Client client = ClientBuilder.newClient(new ClientConfig());
-        WebTarget target = client.target(this.entity.getGemisURI()).path("where");
+        WebTarget target = client.target(this.context.getGemisURI()).path("where");
         var resp = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).post(
                 javax.ws.rs.client.Entity.entity(wh, MediaType.APPLICATION_JSON));
 
@@ -60,7 +60,7 @@ public class TakaraRepository {
         }
 
         List<Instrument> result = new ArrayList<>();
-        switch (this.entity) {
+        switch (this.context.getEntity()) {
             case BOND:
                 var bonds = resp.readEntity(new GenericType<List<Bond>>(){});
                 result.addAll(bonds);

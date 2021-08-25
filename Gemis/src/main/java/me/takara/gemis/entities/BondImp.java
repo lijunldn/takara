@@ -1,7 +1,7 @@
 package me.takara.gemis.entities;
 
 import me.takara.gemis.id.GemisID;
-import me.takara.shared.Entity;
+import me.takara.shared.TakaraEntity;
 import me.takara.shared.entities.Bond;
 
 public class BondImp extends Bond {
@@ -13,7 +13,7 @@ public class BondImp extends Bond {
 
     public BondImp(String name) {
 
-        this(GemisID.generator(Entity.BOND).apply(1).get(0), name);
+        this(GemisID.generator(TakaraEntity.BOND).apply(1).get(0), name);
     }
 
     public BondImp(Long id, String name) {

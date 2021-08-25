@@ -4,10 +4,10 @@ import java.util.Calendar;
 
 public class SyncStamp implements Comparable<SyncStamp> {
 
-    private long timestamp;
-    private long id;
+    protected long timestamp;
+    protected long id;
 
-    private SyncStamp() {
+    protected SyncStamp() {
         timestamp = Calendar.getInstance().getTimeInMillis();
     }
 

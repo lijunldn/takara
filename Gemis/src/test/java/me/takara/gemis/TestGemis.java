@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.takara.gemis.entities.BondImp;
 import me.takara.gemis.entities.EquityImp;
-import me.takara.shared.Entity;
-import me.takara.shared.SyncStamp;
+import me.takara.shared.TakaraContext;
+import me.takara.shared.TakaraEntity;
 import me.takara.shared.entities.Bond;
 import me.takara.shared.entities.Equity;
 import org.junit.Assert;
@@ -16,10 +16,15 @@ public class TestGemis {
     @Test
     public void testCreateGemis() {
 
-        Gemis gms = Gemis.create(Entity.EQUITY);
-        Assert.assertEquals(Entity.EQUITY, gms.getType());
-        Assert.assertEquals(0, gms.size());
-        Assert.assertNull(gms.get(1));
+        Gemis m = Gemis.forceCreate(TakaraContext.BOND_MASTER_LOCAL);
+        Assert.assertEquals(TakaraEntity.BOND, m.getType());
+        Assert.assertEquals(0, m.size());
+        Assert.assertNull(m.get(1));
+
+        Gemis s = Gemis.forceCreate(TakaraContext.BOND_SLAVE_LOCAL);
+        Assert.assertEquals(TakaraEntity.BOND, s.getType());
+        Assert.assertEquals(0, s.size());
+        Assert.assertNull(s.get(1));
     }
 
     @Test
