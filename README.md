@@ -16,11 +16,11 @@ To start a Takara Cache, execute Gemis (me.takara.gemis) with one of the enum ty
   Equity: EQUITY_SLAVE_LOCAL
   ```
   
-###Data Replication 
+###Data Replication###
 master-slave relationship as per 'me.takara.shared.TakaraContext'
 
     
-###REST Interface
+###REST Interface###
 me.takara.gemis.RestfulController
 - heartbeat 
   ```
