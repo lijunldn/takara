@@ -17,27 +17,29 @@ public class TestGemisStrategy {
 
     @Before
     public synchronized void init() {
-        gms = Gemis.forceCreate(TakaraContext.BOND_MASTER_LOCAL);
+        gms = new Gemis(TakaraContext.BOND_MASTER_LOCAL);
     }
 
     @Test
     public void testAdd() {
-        gms.add(new BondImp(Long.valueOf(200), "Nomura"));
+        var nomura = new BondImp("Nomura");
+        gms.add(nomura);
         Assert.assertEquals(1, gms.size());
 
-        gms.add(new BondImp(Long.valueOf(300), "Barcap"));
+        gms.add(new BondImp("Barcap"));
         Assert.assertEquals(2, gms.size());
 
-        gms.add(new BondImp(Long.valueOf(200), "Nomura Sucks"));
+        nomura.setName("Nomura Sucks");
+        gms.add(nomura);
         Assert.assertEquals(2, gms.size());
     }
 
     @Test
     public void testGet() {
-        Bond b1 = new BondImp(Long.valueOf(100), "Morgan Stanley");
+        Bond b1 = new BondImp("Morgan Stanley");
         SyncStamp stamp1 = gms.add(b1);
 
-        var bond = gms.get(100);
+        var bond = gms.get(b1.getId());
         Assert.assertNotNull(bond);
 
         bond = gms.get(200);
@@ -46,28 +48,28 @@ public class TestGemisStrategy {
 
     @Test
     public void testDeactivate() {
-        Bond b1 = new BondImp(Long.valueOf(100), "Morgan Stanley");
+        Bond b1 = new BondImp("Morgan Stanley");
         SyncStamp stamp1 = gms.add(b1);
         Assert.assertEquals(1, gms.size());
         Assert.assertEquals("ACTIVE", b1.getStatus());
 
         SyncStamp stamp2 = gms.deactivate(b1);
         Assert.assertTrue(stamp1.compareTo(stamp2) == -1); // syncstamp should be increased
-        var b2 = gms.get(100);
+        var b2 = gms.get(b1.getId());
         Assert.assertEquals("INACTIVE", b1.getStatus());
         Assert.assertEquals(1, gms.size());
     }
 
     @Test
     public void testSearch() {
-        Bond b1 = new BondImp(Long.valueOf(100), "Morgan Stanley");
+        Bond b1 = new BondImp("Morgan Stanley");
         SyncStamp stamp1 = gms.add(b1);
-        Bond b2 = new BondImp(Long.valueOf(200), "Nomura");
+        Bond b2 = new BondImp("Nomura");
         SyncStamp stamp2 = gms.add(b2);
 
         SearchCriteria wh = new SearchCriteria() {{
            setL_value(BondFields.ID.toString());
-           setR_value("100");
+           setR_value(String.valueOf(b1.getId()));
            setOperator(Operator.EQ);
            setScope(Scope.GET_FIRST);
         }};

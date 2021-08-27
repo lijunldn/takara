@@ -48,9 +48,9 @@ public enum TakaraContext {
     @Override
     public String toString() {
         if (isMaster()) {
-            return String.format("%s (%s|MASTER:%s|%s)", entity, region, host, port);
+            return String.format("Gemis<%s> (%s|MASTER:%s|%s)", entity, region, host, port);
         } else {
-            return String.format("%s (%s|SLAVE:%s|%s <- MASTER:%s|%s)", entity, region, host, port, source_host, source_port);
+            return String.format("Gemis<%s> (%s|SLAVE:%s|%s <- MASTER:%s|%s)", entity, region, host, port, source_host, source_port);
         }
     }
 

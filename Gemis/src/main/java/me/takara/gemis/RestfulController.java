@@ -1,13 +1,20 @@
 package me.takara.gemis;
 
 import com.google.common.base.Stopwatch;
+import me.takara.gemis.entities.BondImp;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
+import me.takara.shared.TakaraEntity;
+import me.takara.shared.entities.InstrumentBase;
 import me.takara.shared.rest.SearchCriteria;
 import me.takara.shared.rest.TrackerResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -31,6 +38,13 @@ public class RestfulController {
         return String.format("HELLO! %s", name);
     }
 
+    @Path("/whoami")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public void whoami(String x) {
+        System.out.println(x);
+    }
+
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -44,11 +58,38 @@ public class RestfulController {
         sw.stop();
 
         if (result != null) {
-            log.info(String.format("getById returned %s[%s:%s] | Cost:%,ds", result.getType(), result.getId(), result.getName(), sw.elapsed(TimeUnit.MILLISECONDS)));
+            log.info(String.format("[GET BY ID] returned %s | Cost:%,ds", result, sw.elapsed(TimeUnit.MILLISECONDS)));
         } else {
-            log.info(String.format("getById returned NULL | Cost:%,ds", sw.elapsed(TimeUnit.MILLISECONDS)));
+            log.info(String.format("[GET BY ID] returned NULL | Cost:%,ds", sw.elapsed(TimeUnit.MILLISECONDS)));
         }
         return result;
+    }
+
+    @POST
+    @Path("/add/{type}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public SyncStamp add(@PathParam("type") String type, String data) {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        TakaraEntity entity = TakaraEntity.valueOf(type);
+        Instrument instrument;
+        switch (entity) {
+            case BOND:
+                instrument = BondImp.valueOf(data);
+                break;
+            case EQUITY:
+                instrument = BondImp.valueOf(data);
+                break;
+            default:
+                throw new NotSupportedException(entity + "not supported");
+        }
+        var stamp = Gemis.getInstance().add(instrument);
+
+        sw.stop();
+        log.info(String.format("[ADD] added (%s) | Cost:%,ds ", instrument, sw.elapsed(TimeUnit.MILLISECONDS)));
+        return SyncStamp.ZERO;
     }
 
     @POST
@@ -62,7 +103,7 @@ public class RestfulController {
         List<Instrument> results = Gemis.getInstance().search(whereClause);
 
         sw.stop();
-        log.info(String.format("getWhere (%s) returned %d %s(s) | Cost:%,ds ",
+        log.info(String.format("[WHERE] (%s) returned %d %s(s) | Cost:%,ds ",
                 whereClause, results.size(), Gemis.getInstance().getType(), sw.elapsed(TimeUnit.MILLISECONDS)));
         return results;
     }
@@ -93,7 +134,7 @@ public class RestfulController {
         var result = Gemis.getInstance().getPuller().of(stamp).hasMore();
 
         sw.stop();
-        log.info(String.format("puller hasNext (%s) returned %s | Cost:%,ds ",
+        log.info(String.format("[HAS NEXT] (%s) returned %s | Cost:%,ds ",
                 stamp, result, sw.elapsed(TimeUnit.MILLISECONDS)));
         return result;
     }
@@ -109,7 +150,7 @@ public class RestfulController {
         var response = Gemis.getInstance().getPuller().of(stamp).next(pagesize);
 
         sw.stop();
-        log.info(String.format("puller getNext returned %d %s(s) - %s => %s. | Cost:%,ds ",
+        log.info(String.format("[NEXT] returned %d %s(s) - %s => %s. | Cost:%,ds ",
                 response.getInstruments().size(), Gemis.getInstance().getType(),
                 stamp, response.getStamp(),
                 sw.elapsed(TimeUnit.MILLISECONDS)));

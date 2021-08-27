@@ -9,4 +9,6 @@ public class Equity extends InstrumentBase {
     @Override
     public TakaraEntity getType() { return TakaraEntity.EQUITY; }
 
+    protected String ric;
+
 }

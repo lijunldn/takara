@@ -19,7 +19,7 @@ public class TestGemisPuller {
 
     @Before
     public synchronized void init() {
-        this.gemis = Gemis.forceCreate(TakaraContext.BOND_MASTER_LOCAL);
+        this.gemis = new Gemis(TakaraContext.BOND_MASTER_LOCAL);
     }
 
     private SyncStamp createSampleData(int total) {

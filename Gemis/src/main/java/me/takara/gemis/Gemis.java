@@ -1,23 +1,26 @@
 package me.takara.gemis;
 
 import me.takara.gemis.entities.BondImp;
+import me.takara.gemis.entities.EquityImp;
+import me.takara.gemis.jersey.GemisJerseyServer;
 import me.takara.gemis.operation.Strategy;
 import me.takara.shared.Instrument;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.TakaraContext;
 import me.takara.shared.TakaraEntity;
+import me.takara.shared.entities.Bond;
+import me.takara.shared.entities.Equity;
 import me.takara.shared.rest.SearchCriteria;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import javax.ws.rs.NotSupportedException;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 //import org.eclipse.jetty.server.Server;
@@ -47,7 +50,7 @@ public class Gemis {
 
     private ScheduledExecutorService heartbeatService = Executors.newSingleThreadScheduledExecutor();
 
-    private Gemis(TakaraContext context) {
+    Gemis(TakaraContext context) {
         this.takaraContext = context;
         log.info(String.format("Gemis %s running ... ", context));
 
@@ -55,13 +58,13 @@ public class Gemis {
             log.info("[HEARTBEAT] " + this.heartbeat());
         }, 3, 3, TimeUnit.MINUTES);
     }
+//
+//    public static Gemis forceCreate(TakaraContext context) {
+//        instance = null;
+//        return create(context);
+//    }
 
-    public static Gemis forceCreate(TakaraContext context) {
-        instance = null;
-        return create(context);
-    }
-
-    public static Gemis create(TakaraContext context) {
+    public static Gemis instanceOf(TakaraContext context) {
         if (instance == null) {
             synchronized (Gemis.class) {
                 if (instance == null) {
@@ -94,45 +97,25 @@ public class Gemis {
 
         assert args == null || args[0].length() == 0;
         TakaraContext context = TakaraContext.valueOf(args[0]);
-        Gemis gemis = create(context);
+        Gemis gemis = Gemis.instanceOf(context);
 
         // populate sample data when it's a master
         if (context.isMaster())
         {
-            for (int i = 0; i < 100; i++)
-                gemis.add(new BondImp("BOND-" + i));
+            if (context.getEntity() == TakaraEntity.BOND) {
+                for (int i = 0; i < 100; i++) {
+                    gemis.add(new BondImp("BOND-" + i));
+                }
+            } else if (context.getEntity() == TakaraEntity.EQUITY) {
+                for (int i = 0; i < 100; i++) {
+                    gemis.add(new EquityImp("EQUITY-" + i, "RIC-" + i));
+                }
+            } else {
+                throw new NotSupportedException(context.getEntity() + " not supported");
+            }
         }
 
-        startJetty(context);
-    }
-
-    private static void startJetty(TakaraContext context) throws Exception {
-
-        log.info("Starting jetty...");
-        final ResourceConfig resourceConfig = new ResourceConfig(RestfulController.class);
-//        final SimpleServer server = SimpleContainerFactory.create(BASE_URI, resourceConfig);
-        final Server server = JettyHttpContainerFactory.createServer(context.getGemisURI(), resourceConfig, false);
-
-//        com.sun.jersey.api.core.ResourceConfig rc = new ClassNamesResourceConfig(RestfulController.class.getName());
-//        com.sun.jersey.api.core.ResourceConfig rc1 = new PackagesResourceConfig("me.takara.gemis");
-//        HttpServer server = GrizzlyServerFactory.createHttpServer(entity.getGemisURI(), rc);
-
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    log.info("Gemis is shutting down...");
-                    server.stop();
-                    log.info("Bye for now... ");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }));
-        server.start();
-
-        log.info(String.format("Jetty started.\nTry out %s\nStop the application using CTRL+C", context.getGemisURI()));
-        Thread.currentThread().join();
+        new GemisJerseyServer(context).start();
     }
 
     /**
@@ -146,7 +129,7 @@ public class Gemis {
 
         var keys = this.getStrategy(Strategy.Operators.ADD).execute(item);
         if (keys.size() > 0) {
-            log.info(String.format("Deactivated %s:%s - %s", takaraContext, item, keys.get(0)));
+            log.info(String.format("Deactivated %s - %s", item, keys.get(0)));
             return keys.get(0);
         }
         return null;
@@ -160,11 +143,37 @@ public class Gemis {
         return this.getPuller().of(stamp);
     }
 
+    boolean canAdd(Instrument item) {
+        if (!takaraContext.isMaster())
+            return false;
+
+        switch (takaraContext.getEntity()) {
+            case BOND:
+                if (item instanceof Bond == false) {
+                    log.warning(String.format("Cannot add %s into %s", item, this.takaraContext));
+                    return false;
+                }
+                break;
+            case EQUITY:
+                if (item instanceof Equity == false) {
+                    log.warning(String.format("Cannot add %s into %s", item, this.takaraContext));
+                    return false;
+                }
+                break;
+            default:
+                throw new NotSupportedException(takaraContext.getEntity() + " not supported");
+        }
+        return true;
+    }
+
     public synchronized SyncStamp add(Instrument item) {
+
+        if (!canAdd(item))
+            return SyncStamp.ZERO;
 
         var keys = this.getStrategy(Strategy.Operators.ADD).execute(item);
         if (keys.size() > 0) {
-            log.info(String.format("Added %s:%s - %s", takaraContext, item, keys.get(0)));
+            log.info(String.format("Added %s - %s", item, keys.get(0)));
             return keys.get(0);
         }
         return null;
@@ -175,10 +184,10 @@ public class Gemis {
         var keys = this.getStrategy(Strategy.Operators.GET).execute(id);
         if (keys.size() > 0) {
             var result = data.get(keys.get(0));
-            log.info(String.format("Found %s:%s - %s", takaraContext, result, keys.get(0)));
+            log.info(String.format("Found %s - %s", result, keys.get(0)));
             return data.get(keys.get(0));
         }
-        log.warning(String.format("Cannot find %s:[%s]", takaraContext, id));
+        log.warning(String.format("Cannot find %s[%s]", takaraContext.getEntity(), id));
         return null;
     }
 
@@ -198,7 +207,7 @@ public class Gemis {
     }
 
     public String heartbeat() {
-        return String.format("Gemis %s has %d items...", this.takaraContext, size());
+        return String.format("%s has %d items...", this.takaraContext, size());
     }
 
     public int size() {

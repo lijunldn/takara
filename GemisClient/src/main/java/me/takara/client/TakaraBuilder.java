@@ -1,13 +1,21 @@
 package me.takara.client;
 
-import me.takara.shared.TakaraContext;
-import me.takara.shared.TakaraEntity;
 import me.takara.shared.SyncStamp;
+import me.takara.shared.TakaraContext;
+
+import javax.ws.rs.NotSupportedException;
 
 public class TakaraBuilder {
 
     public static TakaraRepository create(TakaraContext context) {
-        return new TakaraRepository(context);
+        switch (context.getEntity()) {
+            case BOND:
+                return new TakaraRepository.BondRepository(context);
+            case EQUITY:
+                return new TakaraRepository.EquityRepository(context);
+            default:
+                throw new NotSupportedException(String.format("Takara %s repository not supported", context.getEntity()));
+        }
     }
 
     public static TakaraTracker createTrackerSinceTimeZero(TakaraContext context) {
