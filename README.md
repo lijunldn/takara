@@ -23,7 +23,7 @@ master-slave relationship as per 'me.takara.shared.TakaraContext'
     
 ### REST Interface
 
-me.takara.gemis.RestfulController
+Jersey resource model: RestfulController (me.takara.gemis)
 - heartbeat 
   ```
   http://localhost:8090/gemis/
@@ -32,7 +32,7 @@ me.takara.gemis.RestfulController
 - getById
   ```
   http://localhost:8090/gemis/12
-
+  ```
 
 ## GemisClient
 
