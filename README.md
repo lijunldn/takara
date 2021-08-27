@@ -48,7 +48,7 @@ while (tracker.hasNext()) {
 }
 ```
 
-- Query data: by ID
+- Data Query: By ID
 ```java
 try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepository)TakaraBuilder.create(TakaraContext.BOND_MASTER_LOCAL)) {
     
@@ -57,7 +57,7 @@ try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepo
 }
 ```  
 
-- Query data: WHERE clause
+- Data Query: WHERE clause
 ```java
 try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepository)TakaraBuilder.create(TakaraContext.BOND_MASTER_LOCAL)) {
 
