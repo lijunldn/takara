@@ -1,11 +1,10 @@
 # Project Takara
-- - - - 
 
 Project Takara is a data cache application built on JDK 10.
 
 ## Gemis ##
 
-To start a Takara Cache, execute Gemis (package:me.takara.gemis) with one of the enum types defined in 'me.takara.shared.TakaraContext'.
+To start a Takara Cache, execute Gemis (me.takara.gemis) with one of the enum types defined in 'me.takara.shared.TakaraContext'.
 - start primary
   ```
   Bond: BOND_MASTER_LOCAL
@@ -16,6 +15,7 @@ To start a Takara Cache, execute Gemis (package:me.takara.gemis) with one of the
   Bond: BOND_SLAVE_LOCAL
   Equity: EQUITY_SLAVE_LOCAL
   ```
+  
 ###Data Replication 
 master-slave relationship as per 'me.takara.shared.TakaraContext'
 
