@@ -12,13 +12,13 @@ I'm now re-creating it for fun.
 To start a Takara Cache, execute Gemis (me.takara.gemis) with one of the enum types defined in 'me.takara.shared.TakaraContext'.
 - start primary
   ```
-  Bond: BOND_MASTER_LOCAL
-  Equity: EQUITY_MASTER_LOCAL
+  Bond: BOND_PRIMARY_LOCAL
+  Equity: EQUITY_SECONDARY_LOCAL
   ```
 - start secondary
   ```
-  Bond: BOND_SLAVE_LOCAL
-  Equity: EQUITY_SLAVE_LOCAL
+  Bond: BOND_PRIMARY_LOCAL
+  Equity: EQUITY_SECONDARY_LOCAL
   ```
   
 ### Data Replication

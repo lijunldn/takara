@@ -7,10 +7,6 @@ public class SyncStamp implements Comparable<SyncStamp> {
     protected long timestamp;
     protected long id;
 
-    protected SyncStamp() {
-        timestamp = Calendar.getInstance().getTimeInMillis();
-    }
-
     public final static SyncStamp ZERO;
 
     static {
@@ -39,6 +35,7 @@ public class SyncStamp implements Comparable<SyncStamp> {
 
     public static SyncStamp create(long id) {
         SyncStamp me = new SyncStamp();
+        me.timestamp = Calendar.getInstance().getTimeInMillis();
         me.id = id;
         return me;
     }

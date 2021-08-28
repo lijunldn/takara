@@ -2,7 +2,6 @@ package me.takara.gemis;
 
 import me.takara.gemis.entities.BondImp;
 import me.takara.shared.TakaraContext;
-import me.takara.shared.TakaraEntity;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.entities.Bond;
 import me.takara.shared.entities.fields.BondFields;
@@ -17,7 +16,7 @@ public class TestGemisStrategy {
 
     @Before
     public synchronized void init() {
-        gms = new Gemis(TakaraContext.BOND_MASTER_LOCAL);
+        gms = new Gemis(TakaraContext.BOND_PRIMARY_LOCAL);
     }
 
     @Test
@@ -47,12 +46,13 @@ public class TestGemisStrategy {
     }
 
     @Test
-    public void testDeactivate() {
+    public void testDeactivate() throws InterruptedException {
         Bond b1 = new BondImp("Morgan Stanley");
         SyncStamp stamp1 = gms.add(b1);
         Assert.assertEquals(1, gms.size());
         Assert.assertEquals("ACTIVE", b1.getStatus());
 
+        Thread.sleep(100); // pause to make sure SyncStamp will be diff
         SyncStamp stamp2 = gms.deactivate(b1);
         Assert.assertTrue(stamp1.compareTo(stamp2) == -1); // syncstamp should be increased
         var b2 = gms.get(b1.getId());

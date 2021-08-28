@@ -11,7 +11,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TestGemisPuller {
 
@@ -19,7 +18,7 @@ public class TestGemisPuller {
 
     @Before
     public synchronized void init() {
-        this.gemis = new Gemis(TakaraContext.BOND_MASTER_LOCAL);
+        this.gemis = new Gemis(TakaraContext.BOND_PRIMARY_LOCAL);
     }
 
     private SyncStamp createSampleData(int total) {
@@ -68,7 +67,7 @@ public class TestGemisPuller {
         SyncStamp stampX = createSampleData(total);
 
         // tracker start from 0
-        var puller = gemis.pullSinceTimeZero();
+        var puller = gemis.getPuller().of(SyncStamp.ZERO);
         List<Instrument> list = pull(puller);
 
         // verify - 10 pulled
@@ -84,7 +83,7 @@ public class TestGemisPuller {
         SyncStamp stampY = createSampleData(6);
 
         // when x is between zero and max
-        var puller = gemis.pullSince(stampX);
+        var puller = gemis.getPuller().of(stampX);
         List<Instrument> list = pull(puller);
         System.out.println("Results: ");
         list.forEach(System.out::println);

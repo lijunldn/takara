@@ -17,7 +17,7 @@ public class TestGemis {
     @Test
     public void testCreateGemis() {
 
-        Gemis m = new Gemis(TakaraContext.BOND_MASTER_LOCAL);
+        Gemis m = new Gemis(TakaraContext.BOND_PRIMARY_LOCAL);
         Assert.assertEquals(TakaraEntity.BOND, m.getType());
         Assert.assertEquals(0, m.size());
         Assert.assertNull(m.get(1));
@@ -30,12 +30,12 @@ public class TestGemis {
         Assert.assertEquals("Nomura", bond.getName());
         Assert.assertEquals(TakaraEntity.BOND, bond.getType());
 
-        Gemis s = new Gemis(TakaraContext.BOND_SLAVE_LOCAL);
+        Gemis s = new Gemis(TakaraContext.BOND_SECONDARY_LOCAL);
         Assert.assertEquals(TakaraEntity.BOND, s.getType());
         Assert.assertEquals(0, s.size());
         Assert.assertNull(s.get(1));
 
-        Gemis eq = new Gemis(TakaraContext.EQUITY_MASTER_LOCAL);
+        Gemis eq = new Gemis(TakaraContext.EQUITY_PRIMARY_LOCAL);
         var stamp = eq.add(new BondImp("Nomura"));
         Assert.assertEquals(SyncStamp.ZERO, stamp);
         Assert.assertEquals(0, eq.size());

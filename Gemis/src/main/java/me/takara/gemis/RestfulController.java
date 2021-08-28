@@ -134,7 +134,7 @@ public class RestfulController {
         var result = Gemis.getInstance().getPuller().of(stamp).hasMore();
 
         sw.stop();
-        log.info(String.format("[HAS NEXT] (%s) returned %s | Cost:%,ds ",
+        log.info(String.format("[HAS NEXT] %s returned %s | Cost:%,ds ",
                 stamp, result, sw.elapsed(TimeUnit.MILLISECONDS)));
         return result;
     }

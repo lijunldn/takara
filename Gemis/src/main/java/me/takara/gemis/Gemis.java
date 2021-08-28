@@ -11,16 +11,12 @@ import me.takara.shared.TakaraEntity;
 import me.takara.shared.entities.Bond;
 import me.takara.shared.entities.Equity;
 import me.takara.shared.rest.SearchCriteria;
-import org.eclipse.jetty.server.Server;
-import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
 
 import javax.ws.rs.NotSupportedException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 //import org.eclipse.jetty.server.Server;
@@ -50,19 +46,21 @@ public class Gemis {
 
     private ScheduledExecutorService heartbeatService = Executors.newSingleThreadScheduledExecutor();
 
+    private GemisReplicator replicator;
+
     Gemis(TakaraContext context) {
         this.takaraContext = context;
         log.info(String.format("Gemis %s running ... ", context));
+
+        if (!context.isPrimary()) {
+            // secondary replicate data from its primary
+            replicator = new GemisReplicator(context);
+        }
 
         heartbeatService.scheduleAtFixedRate(() -> {
             log.info("[HEARTBEAT] " + this.heartbeat());
         }, 3, 3, TimeUnit.MINUTES);
     }
-//
-//    public static Gemis forceCreate(TakaraContext context) {
-//        instance = null;
-//        return create(context);
-//    }
 
     public static Gemis instanceOf(TakaraContext context) {
         if (instance == null) {
@@ -100,7 +98,7 @@ public class Gemis {
         Gemis gemis = Gemis.instanceOf(context);
 
         // populate sample data when it's a master
-        if (context.isMaster())
+        if (context.isPrimary())
         {
             if (context.getEntity() == TakaraEntity.BOND) {
                 for (int i = 0; i < 100; i++) {
@@ -135,16 +133,8 @@ public class Gemis {
         return null;
     }
 
-    public GemisPuller pullSinceTimeZero() {
-        return this.getPuller().of(SyncStamp.ZERO);
-    }
-
-    public GemisPuller pullSince(SyncStamp stamp) {
-        return this.getPuller().of(stamp);
-    }
-
     boolean canAdd(Instrument item) {
-        if (!takaraContext.isMaster())
+        if (!takaraContext.isPrimary())
             return false;
 
         switch (takaraContext.getEntity()) {

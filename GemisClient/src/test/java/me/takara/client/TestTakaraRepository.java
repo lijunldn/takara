@@ -24,7 +24,7 @@ public class TestTakaraRepository {
     @Test
     public void testGet() {
 
-        try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepository)TakaraBuilder.create(TakaraContext.BOND_MASTER_LOCAL)) {
+        try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepository)TakaraBuilder.create(TakaraContext.BOND_PRIMARY_LOCAL)) {
 
             if (!isGemisReady(bondRepository)) return;
 
@@ -32,7 +32,7 @@ public class TestTakaraRepository {
             Assert.assertEquals(12, item.getId());
         }
 
-        try (TakaraRepository.EquityRepository equityRepository = (TakaraRepository.EquityRepository)TakaraBuilder.create(TakaraContext.EQUITY_MASTER_LOCAL)) {
+        try (TakaraRepository.EquityRepository equityRepository = (TakaraRepository.EquityRepository)TakaraBuilder.create(TakaraContext.EQUITY_PRIMARY_LOCAL)) {
 
             if (!isGemisReady(equityRepository)) return;
 
@@ -44,7 +44,7 @@ public class TestTakaraRepository {
     @Test
     public void testWhere() {
 
-        try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepository)TakaraBuilder.create(TakaraContext.BOND_MASTER_LOCAL)) {
+        try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepository)TakaraBuilder.create(TakaraContext.BOND_PRIMARY_LOCAL)) {
             if (!isGemisReady(bondRepository)) return;
 
             List<Instrument> results = bondRepository.where().equal(BondFields.ID, 22).fetchFirstOnly();
@@ -61,7 +61,7 @@ public class TestTakaraRepository {
 
     @Test
     public void testAdd() {
-        try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepository)TakaraBuilder.create(TakaraContext.BOND_MASTER_LOCAL)) {
+        try (TakaraRepository.BondRepository bondRepository = (TakaraRepository.BondRepository)TakaraBuilder.create(TakaraContext.BOND_PRIMARY_LOCAL)) {
 
             if (!isGemisReady(bondRepository)) return;
 

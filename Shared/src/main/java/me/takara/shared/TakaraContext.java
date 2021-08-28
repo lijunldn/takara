@@ -1,14 +1,16 @@
 package me.takara.shared;
 
 import java.net.URI;
+import java.util.Arrays;
+
 import org.apache.commons.lang3.StringUtils;
 
 public enum TakaraContext {
 
-    EQUITY_MASTER_LOCAL(TakaraEntity.EQUITY, TakaraRegion.LOCAL, "localhost", 8080, "", -1),
-    EQUITY_SLAVE_LOCAL(TakaraEntity.EQUITY, TakaraRegion.LOCAL, "localhost", 8081, EQUITY_MASTER_LOCAL.host, EQUITY_MASTER_LOCAL.port),
-    BOND_MASTER_LOCAL(TakaraEntity.BOND, TakaraRegion.LOCAL, "localhost", 8090, "", -1),
-    BOND_SLAVE_LOCAL(TakaraEntity.BOND, TakaraRegion.LOCAL, "localhost", 8091, BOND_MASTER_LOCAL.host, BOND_MASTER_LOCAL.port);
+    EQUITY_PRIMARY_LOCAL(TakaraEntity.EQUITY, TakaraRegion.LOCAL, "localhost", 8080, "", -1),
+    EQUITY_SECONDARY_LOCAL(TakaraEntity.EQUITY, TakaraRegion.LOCAL, "localhost", 8081, EQUITY_PRIMARY_LOCAL.host, EQUITY_PRIMARY_LOCAL.port),
+    BOND_PRIMARY_LOCAL(TakaraEntity.BOND, TakaraRegion.LOCAL, "localhost", 8090, "", -1),
+    BOND_SECONDARY_LOCAL(TakaraEntity.BOND, TakaraRegion.LOCAL, "localhost", 8091, BOND_PRIMARY_LOCAL.host, BOND_PRIMARY_LOCAL.port);
 
     /**
      *
@@ -16,18 +18,18 @@ public enum TakaraContext {
      * @param region
      * @param host
      * @param port
-     * @param source_host source data host where replication pulls data from
-     * @param source_port
+     * @param primary_host source data host where replication pulls data from
+     * @param primary_port
      */
     private TakaraContext(TakaraEntity takaraEntity, TakaraRegion region,
                          String host, int port,
-                         String source_host, int source_port) {
+                         String primary_host, int primary_port) {
         this.entity = takaraEntity;
         this.region = region;
         this.host = host;
         this.port = port;
-        this.source_host = source_host;
-        this.source_port = source_port;
+        this.primary_host = primary_host;
+        this.primary_port = primary_port;
     }
 
     public TakaraEntity getEntity() {
@@ -38,23 +40,35 @@ public enum TakaraContext {
     private TakaraRegion region;
     private String host;
     private int port;
-    private String source_host;
-    private int source_port;
+    private String primary_host;
+    private int primary_port;
 
     public URI getGemisURI() {
         return URI.create(String.format("http://%s:%d/gemis", host, port));
     }
 
+    public URI getPrimaryURI() {
+        return URI.create(String.format("http://%s:%d/gemis", this.primary_host, this.primary_port));
+    }
+
     @Override
     public String toString() {
-        if (isMaster()) {
+        if (isPrimary()) {
             return String.format("Gemis<%s> (%s|MASTER:%s|%s)", entity, region, host, port);
         } else {
-            return String.format("Gemis<%s> (%s|SLAVE:%s|%s <- MASTER:%s|%s)", entity, region, host, port, source_host, source_port);
+            return String.format("Gemis<%s> (%s|SLAVE:%s|%s <- MASTER:%s|%s)", entity, region, host, port, primary_host, primary_port);
         }
     }
 
-    public boolean isMaster() {
-        return StringUtils.isEmpty(this.source_host);
+    public boolean isPrimary() {
+        return StringUtils.isEmpty(this.primary_host);
+    }
+
+    public TakaraContext getPrimaryContext() {
+
+        if (isPrimary()) return this;
+
+        var r = Arrays.stream(TakaraContext.values()).filter(a -> a.host.equals(this.primary_host) && a.port == this.primary_port).findFirst();
+        return r.orElse(null);
     }
 }

@@ -5,6 +5,7 @@ import me.takara.shared.TakaraEntity;
 import me.takara.shared.SyncStamp;
 import me.takara.shared.rest.TrackerResponse;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -16,10 +17,15 @@ public class TakaraTracker {
     public TakaraTracker(TakaraContext context, SyncStamp stamp) {
         this.context = context;
         this.stamp = stamp;
+
+        clientConfig = new ClientConfig();
+//        clientConfig.register( new JacksonFeature() );
     }
 
     private TakaraContext context;
     private SyncStamp stamp;
+
+    private ClientConfig clientConfig;
 
     public final SyncStamp getSyncStamp() {
         return stamp;
@@ -27,7 +33,7 @@ public class TakaraTracker {
 
     public boolean hasNext() {
 
-        Client client = ClientBuilder.newClient(new ClientConfig());
+        Client client = ClientBuilder.newClient(clientConfig);
         WebTarget target = client.target(this.context.getGemisURI()).path("tracker/hasNext");
         var resp = target.request(MediaType.APPLICATION_JSON).accept(MediaType.TEXT_PLAIN).post(
                 javax.ws.rs.client.Entity.entity(this.stamp, MediaType.APPLICATION_JSON));
