@@ -40,6 +40,12 @@ public class SyncStamp implements Comparable<SyncStamp> {
         return me;
     }
 
+    public SyncStamp reset(long id, long timestamp) {
+        this.id = id;
+        this.timestamp = timestamp;
+        return this;
+    }
+
     public long getId() {
         return id;
     }

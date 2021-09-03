@@ -42,3 +42,4 @@ message GrpcEquity {
 
   string ric = 4;
 }
+

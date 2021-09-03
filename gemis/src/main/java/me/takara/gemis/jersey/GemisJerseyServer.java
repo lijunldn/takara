@@ -46,6 +46,5 @@ public class GemisJerseyServer {
         server.start();
 
         log.info(String.format("[RESTful] Jetty started.\nTry out %s\nStop the application using CTRL+C", context.getGemisURI()));
-        Thread.currentThread().join();
     }
 }

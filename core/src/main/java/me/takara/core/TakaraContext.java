@@ -76,4 +76,8 @@ public enum TakaraContext {
         var r = Arrays.stream(TakaraContext.values()).filter(a -> a.host.equals(this.primary_host) && a.httpPort == this.primary_port).findFirst();
         return r.orElse(null);
     }
+
+    public String getHost() {
+        return this.host;
+    }
 }

@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 //import org.eclipse.jetty.server.Server;
@@ -55,7 +56,7 @@ public class Gemis {
 
         if (!context.isPrimary()) {
             // secondary replicate data from its primary
-            replicator = new GemisReplicator(context);
+            replicator = new GemisReplicator(context, this::add);
         }
 
         heartbeatService.scheduleAtFixedRate(() -> {
@@ -115,9 +116,11 @@ public class Gemis {
 
         }
 
+        new GemisJerseyServer(context).start();
+
         new GemisGrpcServer(context.getGrpcPort()).start();
 
-        new GemisJerseyServer(context).start();
+        Thread.currentThread().join();
     }
 
     /**

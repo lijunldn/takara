@@ -39,6 +39,16 @@ public final class GemisGrpc {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_me_takara_core_GrpcEquity_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_me_takara_core_HelloRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_me_takara_core_HelloRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_me_takara_core_HelloReply_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_me_takara_core_HelloReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -58,11 +68,14 @@ public final class GemisGrpc {
       "\030\003 \003(\0132\032.me.takara.core.GrpcEquity\"4\n\010Gr" +
       "pcBond\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\016\n\006stat" +
       "us\030\003 \001(\t\"C\n\nGrpcEquity\022\n\n\002id\030\001 \001(\005\022\014\n\004na" +
-      "me\030\002 \001(\t\022\016\n\006status\030\003 \001(\t\022\013\n\003ric\030\004 \001(\t2Y\n" +
-      "\024RemotePullingService\022A\n\004Pull\022\033.me.takar" +
-      "a.core.GrpcPullReq\032\034.me.takara.core.Grpc" +
-      "PullRespB&\n\024me.takara.gemis.grpcB\tGemisG" +
-      "rpcP\001\210\001\001b\006proto3"
+      "me\030\002 \001(\t\022\016\n\006status\030\003 \001(\t\022\013\n\003ric\030\004 \001(\t\"\034\n" +
+      "\014HelloRequest\022\014\n\004name\030\001 \001(\t\"\035\n\nHelloRepl" +
+      "y\022\017\n\007message\030\001 \001(\t2\241\001\n\024RemotePullingServ" +
+      "ice\022A\n\004Pull\022\033.me.takara.core.GrpcPullReq" +
+      "\032\034.me.takara.core.GrpcPullResp\022F\n\010SayHel" +
+      "lo\022\034.me.takara.core.HelloRequest\032\032.me.ta" +
+      "kara.core.HelloReply\"\000B&\n\024me.takara.gemi" +
+      "s.grpcB\tGemisGrpcP\001\210\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -98,6 +111,18 @@ public final class GemisGrpc {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_me_takara_core_GrpcEquity_descriptor,
         new java.lang.String[] { "Id", "Name", "Status", "Ric", });
+    internal_static_me_takara_core_HelloRequest_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_me_takara_core_HelloRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_me_takara_core_HelloRequest_descriptor,
+        new java.lang.String[] { "Name", });
+    internal_static_me_takara_core_HelloReply_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_me_takara_core_HelloReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_me_takara_core_HelloReply_descriptor,
+        new java.lang.String[] { "Message", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -19,6 +19,14 @@ public  abstract class RemotePullingService
         me.takara.gemis.grpc.GrpcPullReq request,
         com.google.protobuf.RpcCallback<me.takara.gemis.grpc.GrpcPullResp> done);
 
+    /**
+     * <code>rpc SayHello(.me.takara.core.HelloRequest) returns (.me.takara.core.HelloReply);</code>
+     */
+    public abstract void sayHello(
+        com.google.protobuf.RpcController controller,
+        me.takara.gemis.grpc.HelloRequest request,
+        com.google.protobuf.RpcCallback<me.takara.gemis.grpc.HelloReply> done);
+
   }
 
   public static com.google.protobuf.Service newReflectiveService(
@@ -30,6 +38,14 @@ public  abstract class RemotePullingService
           me.takara.gemis.grpc.GrpcPullReq request,
           com.google.protobuf.RpcCallback<me.takara.gemis.grpc.GrpcPullResp> done) {
         impl.pull(controller, request, done);
+      }
+
+      @java.lang.Override
+      public  void sayHello(
+          com.google.protobuf.RpcController controller,
+          me.takara.gemis.grpc.HelloRequest request,
+          com.google.protobuf.RpcCallback<me.takara.gemis.grpc.HelloReply> done) {
+        impl.sayHello(controller, request, done);
       }
 
     };
@@ -56,6 +72,8 @@ public  abstract class RemotePullingService
         switch(method.getIndex()) {
           case 0:
             return impl.pull(controller, (me.takara.gemis.grpc.GrpcPullReq)request);
+          case 1:
+            return impl.sayHello(controller, (me.takara.gemis.grpc.HelloRequest)request);
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -72,6 +90,8 @@ public  abstract class RemotePullingService
         switch(method.getIndex()) {
           case 0:
             return me.takara.gemis.grpc.GrpcPullReq.getDefaultInstance();
+          case 1:
+            return me.takara.gemis.grpc.HelloRequest.getDefaultInstance();
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -88,6 +108,8 @@ public  abstract class RemotePullingService
         switch(method.getIndex()) {
           case 0:
             return me.takara.gemis.grpc.GrpcPullResp.getDefaultInstance();
+          case 1:
+            return me.takara.gemis.grpc.HelloReply.getDefaultInstance();
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -103,6 +125,14 @@ public  abstract class RemotePullingService
       com.google.protobuf.RpcController controller,
       me.takara.gemis.grpc.GrpcPullReq request,
       com.google.protobuf.RpcCallback<me.takara.gemis.grpc.GrpcPullResp> done);
+
+  /**
+   * <code>rpc SayHello(.me.takara.core.HelloRequest) returns (.me.takara.core.HelloReply);</code>
+   */
+  public abstract void sayHello(
+      com.google.protobuf.RpcController controller,
+      me.takara.gemis.grpc.HelloRequest request,
+      com.google.protobuf.RpcCallback<me.takara.gemis.grpc.HelloReply> done);
 
   public static final
       com.google.protobuf.Descriptors.ServiceDescriptor
@@ -131,6 +161,11 @@ public  abstract class RemotePullingService
           com.google.protobuf.RpcUtil.<me.takara.gemis.grpc.GrpcPullResp>specializeCallback(
             done));
         return;
+      case 1:
+        this.sayHello(controller, (me.takara.gemis.grpc.HelloRequest)request,
+          com.google.protobuf.RpcUtil.<me.takara.gemis.grpc.HelloReply>specializeCallback(
+            done));
+        return;
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -147,6 +182,8 @@ public  abstract class RemotePullingService
     switch(method.getIndex()) {
       case 0:
         return me.takara.gemis.grpc.GrpcPullReq.getDefaultInstance();
+      case 1:
+        return me.takara.gemis.grpc.HelloRequest.getDefaultInstance();
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -163,6 +200,8 @@ public  abstract class RemotePullingService
     switch(method.getIndex()) {
       case 0:
         return me.takara.gemis.grpc.GrpcPullResp.getDefaultInstance();
+      case 1:
+        return me.takara.gemis.grpc.HelloReply.getDefaultInstance();
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -198,6 +237,21 @@ public  abstract class RemotePullingService
           me.takara.gemis.grpc.GrpcPullResp.class,
           me.takara.gemis.grpc.GrpcPullResp.getDefaultInstance()));
     }
+
+    public  void sayHello(
+        com.google.protobuf.RpcController controller,
+        me.takara.gemis.grpc.HelloRequest request,
+        com.google.protobuf.RpcCallback<me.takara.gemis.grpc.HelloReply> done) {
+      channel.callMethod(
+        getDescriptor().getMethods().get(1),
+        controller,
+        request,
+        me.takara.gemis.grpc.HelloReply.getDefaultInstance(),
+        com.google.protobuf.RpcUtil.generalizeCallback(
+          done,
+          me.takara.gemis.grpc.HelloReply.class,
+          me.takara.gemis.grpc.HelloReply.getDefaultInstance()));
+    }
   }
 
   public static BlockingInterface newBlockingStub(
@@ -209,6 +263,11 @@ public  abstract class RemotePullingService
     public me.takara.gemis.grpc.GrpcPullResp pull(
         com.google.protobuf.RpcController controller,
         me.takara.gemis.grpc.GrpcPullReq request)
+        throws com.google.protobuf.ServiceException;
+
+    public me.takara.gemis.grpc.HelloReply sayHello(
+        com.google.protobuf.RpcController controller,
+        me.takara.gemis.grpc.HelloRequest request)
         throws com.google.protobuf.ServiceException;
   }
 
@@ -228,6 +287,18 @@ public  abstract class RemotePullingService
         controller,
         request,
         me.takara.gemis.grpc.GrpcPullResp.getDefaultInstance());
+    }
+
+
+    public me.takara.gemis.grpc.HelloReply sayHello(
+        com.google.protobuf.RpcController controller,
+        me.takara.gemis.grpc.HelloRequest request)
+        throws com.google.protobuf.ServiceException {
+      return (me.takara.gemis.grpc.HelloReply) channel.callBlockingMethod(
+        getDescriptor().getMethods().get(1),
+        controller,
+        request,
+        me.takara.gemis.grpc.HelloReply.getDefaultInstance());
     }
 
   }

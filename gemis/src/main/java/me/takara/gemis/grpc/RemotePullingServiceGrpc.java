@@ -46,6 +46,37 @@ public final class RemotePullingServiceGrpc {
     return getPullMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<me.takara.gemis.grpc.HelloRequest,
+      me.takara.gemis.grpc.HelloReply> getSayHelloMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SayHello",
+      requestType = me.takara.gemis.grpc.HelloRequest.class,
+      responseType = me.takara.gemis.grpc.HelloReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<me.takara.gemis.grpc.HelloRequest,
+      me.takara.gemis.grpc.HelloReply> getSayHelloMethod() {
+    io.grpc.MethodDescriptor<me.takara.gemis.grpc.HelloRequest, me.takara.gemis.grpc.HelloReply> getSayHelloMethod;
+    if ((getSayHelloMethod = RemotePullingServiceGrpc.getSayHelloMethod) == null) {
+      synchronized (RemotePullingServiceGrpc.class) {
+        if ((getSayHelloMethod = RemotePullingServiceGrpc.getSayHelloMethod) == null) {
+          RemotePullingServiceGrpc.getSayHelloMethod = getSayHelloMethod =
+              io.grpc.MethodDescriptor.<me.takara.gemis.grpc.HelloRequest, me.takara.gemis.grpc.HelloReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SayHello"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  me.takara.gemis.grpc.HelloRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  me.takara.gemis.grpc.HelloReply.getDefaultInstance()))
+              .setSchemaDescriptor(new RemotePullingServiceMethodDescriptorSupplier("SayHello"))
+              .build();
+        }
+      }
+    }
+    return getSayHelloMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -101,6 +132,13 @@ public final class RemotePullingServiceGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getPullMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void sayHello(me.takara.gemis.grpc.HelloRequest request,
+        io.grpc.stub.StreamObserver<me.takara.gemis.grpc.HelloReply> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSayHelloMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -110,6 +148,13 @@ public final class RemotePullingServiceGrpc {
                 me.takara.gemis.grpc.GrpcPullReq,
                 me.takara.gemis.grpc.GrpcPullResp>(
                   this, METHODID_PULL)))
+          .addMethod(
+            getSayHelloMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                me.takara.gemis.grpc.HelloRequest,
+                me.takara.gemis.grpc.HelloReply>(
+                  this, METHODID_SAY_HELLO)))
           .build();
     }
   }
@@ -135,6 +180,14 @@ public final class RemotePullingServiceGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getPullMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void sayHello(me.takara.gemis.grpc.HelloRequest request,
+        io.grpc.stub.StreamObserver<me.takara.gemis.grpc.HelloReply> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSayHelloMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -156,6 +209,13 @@ public final class RemotePullingServiceGrpc {
     public me.takara.gemis.grpc.GrpcPullResp pull(me.takara.gemis.grpc.GrpcPullReq request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getPullMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public me.takara.gemis.grpc.HelloReply sayHello(me.takara.gemis.grpc.HelloRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSayHelloMethod(), getCallOptions(), request);
     }
   }
 
@@ -180,9 +240,18 @@ public final class RemotePullingServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getPullMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<me.takara.gemis.grpc.HelloReply> sayHello(
+        me.takara.gemis.grpc.HelloRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSayHelloMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_PULL = 0;
+  private static final int METHODID_SAY_HELLO = 1;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -204,6 +273,10 @@ public final class RemotePullingServiceGrpc {
         case METHODID_PULL:
           serviceImpl.pull((me.takara.gemis.grpc.GrpcPullReq) request,
               (io.grpc.stub.StreamObserver<me.takara.gemis.grpc.GrpcPullResp>) responseObserver);
+          break;
+        case METHODID_SAY_HELLO:
+          serviceImpl.sayHello((me.takara.gemis.grpc.HelloRequest) request,
+              (io.grpc.stub.StreamObserver<me.takara.gemis.grpc.HelloReply>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -267,6 +340,7 @@ public final class RemotePullingServiceGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new RemotePullingServiceFileDescriptorSupplier())
               .addMethod(getPullMethod())
+              .addMethod(getSayHelloMethod())
               .build();
         }
       }
