@@ -1,0 +1,154 @@
+package me.takara.gemis;
+
+import com.google.common.base.Stopwatch;
+import me.takara.gemis.entities.BondImp;
+import me.takara.core.Instrument;
+import me.takara.core.SyncStamp;
+import me.takara.core.TakaraEntity;
+import me.takara.core.rest.SearchCriteria;
+import me.takara.core.rest.TrackerResponse;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+@Path("/gemis")
+public class RestfulController {
+
+    private static Logger log = Logger.getLogger(RestfulController.class.getName());
+    private String logTime = "Took %,ds";
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String heartbeat() {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        String name = Gemis.getInstance().heartbeat();
+
+        sw.stop();
+        log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
+        return String.format("HELLO! %s", name);
+    }
+
+    @Path("/whoami")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public void whoami(String x) {
+        System.out.println(x);
+    }
+
+    @Path("/{id}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Instrument getById(@PathParam("id") long id) {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        Instrument result = Gemis.getInstance().get(id);
+
+        sw.stop();
+
+        if (result != null) {
+            log.info(String.format("[GET BY ID] returned %s | Cost:%,ds", result, sw.elapsed(TimeUnit.MILLISECONDS)));
+        } else {
+            log.info(String.format("[GET BY ID] returned NULL | Cost:%,ds", sw.elapsed(TimeUnit.MILLISECONDS)));
+        }
+        return result;
+    }
+
+    @POST
+    @Path("/add/{type}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public SyncStamp add(@PathParam("type") String type, String data) {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        TakaraEntity entity = TakaraEntity.valueOf(type);
+        Instrument instrument;
+        switch (entity) {
+            case BOND:
+                instrument = BondImp.valueOf(data);
+                break;
+            case EQUITY:
+                instrument = BondImp.valueOf(data);
+                break;
+            default:
+                throw new NotSupportedException(entity + "not supported");
+        }
+        var stamp = Gemis.getInstance().add(instrument);
+
+        sw.stop();
+        log.info(String.format("[ADD] added (%s) | Cost:%,ds ", instrument, sw.elapsed(TimeUnit.MILLISECONDS)));
+        return SyncStamp.ZERO;
+    }
+
+    @POST
+    @Path("/where")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public List<Instrument> getWhere(SearchCriteria whereClause) {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        List<Instrument> results = Gemis.getInstance().search(whereClause);
+
+        sw.stop();
+        log.info(String.format("[WHERE] (%s) returned %d %s(s) | Cost:%,ds ",
+                whereClause, results.size(), Gemis.getInstance().getType(), sw.elapsed(TimeUnit.MILLISECONDS)));
+        return results;
+    }
+
+//    @Path("/add")
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    public SyncStamp add(Bond bond) {
+//
+//        assert bond != null;
+//        final Stopwatch sw = new Stopwatch().start();
+//
+//        SyncStamp stamp = Gemis.getInstance().add(bond);
+//
+//        log.info(String.format(logTime, sw.elapsed(TimeUnit.MILLISECONDS)));
+//        return stamp;
+//    }
+
+    @POST
+    @Path("/tracker/hasNext")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean hasNext(SyncStamp stamp) {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        var result = Gemis.getInstance().getPuller().of(stamp).hasMore();
+
+        sw.stop();
+        log.info(String.format("[HAS NEXT] %s returned %s | Cost:%,ds ",
+                stamp, result, sw.elapsed(TimeUnit.MILLISECONDS)));
+        return result;
+    }
+
+    @POST
+    @Path("/tracker/next/{pagesize}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public TrackerResponse getNext(@PathParam("pagesize") int pagesize, SyncStamp stamp) {
+
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        var response = Gemis.getInstance().getPuller().of(stamp).next(pagesize);
+
+        sw.stop();
+        log.info(String.format("[NEXT] returned %d %s(s) - %s => %s. | Cost:%,ds ",
+                response.getInstruments().size(), Gemis.getInstance().getType(),
+                stamp, response.getStamp(),
+                sw.elapsed(TimeUnit.MILLISECONDS)));
+        return response;
+    }
+}

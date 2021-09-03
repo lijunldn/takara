@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package me.takara.core;
+
+option java_multiple_files = true;
+option java_package = "me.takara.gemis.grpc";
+option java_outer_classname = "GemisGrpc";
+option java_generic_services = true;
+
+service RemotePullingService {
+  rpc Pull(GrpcPullReq) returns (GrpcPullResp);
+}
+
+message GrpcSyncStamp {
+  int32 id = 1;
+  int32 timestamp = 2;
+}
+
+message GrpcPullReq {
+  GrpcSyncStamp syncStamp = 1;
+
+  int32 pagesize = 2;
+}
+
+message GrpcPullResp {
+  GrpcSyncStamp syncStamp = 1;
+
+  repeated GrpcBond bonds = 2;
+  repeated GrpcEquity equities = 3;
+}
+
+message GrpcBond {
+  int32 id = 1;
+  string name = 2;
+  string status = 3;
+}
+
+message GrpcEquity {
+  int32 id = 1;
+  string name = 2;
+  string status = 3;
+
+  string ric = 4;
+}
